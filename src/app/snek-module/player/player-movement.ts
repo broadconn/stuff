@@ -13,7 +13,6 @@ export class PlayerMovementProcessor {
 
     private setupKeyListeners() {
         window.addEventListener('keydown', this.onKeyDown.bind(this));
-        window.addEventListener('keyup', this.onKeyUp.bind(this));
     }
 
     //adds the pressed key to the list of keys pressed
@@ -22,14 +21,6 @@ export class PlayerMovementProcessor {
             this._keysPressed.push(e.key);
         }
         //console.log(this._keysPressed);
-    }
-
-    //removes the released key from the list of keys pressed
-    private onKeyUp(e: KeyboardEvent) {
-        // if (this.keysRecognised.indexOf(e.key) >= 0) {
-        //     this._keysPressed.splice(this._keysPressed.indexOf(e.key), 1);
-        // }
-        // console.log(this._keysPressed);
     }
 
     public getMoveDirection(): Vector2 {
