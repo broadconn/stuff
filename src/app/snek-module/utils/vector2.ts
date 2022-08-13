@@ -11,6 +11,10 @@ export class Vector2 {
         return new Vector2(this.x + v.x, this.y + v.y);
     }
 
+    equals(v: Vector2) {
+        return this.x == v.x && this.y == v.y;
+    }
+
     static zero(): Vector2 {
         return new Vector2(0, 0);
     }

@@ -27,7 +27,7 @@ export class Snake {
   update() {
     //console.log("player update");
 
-    let moveDirection = this.movement.getMoveDirection(); // a valid direction the player has committed to moving in
+    let moveDirection = this.movement.updateDirection(); // a valid direction the player has committed to moving in
     //console.log(moveDirection);
 
     // get target location, check for any crashes 
