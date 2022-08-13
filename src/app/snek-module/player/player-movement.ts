@@ -21,7 +21,7 @@ export class PlayerMovementProcessor {
     }
 
     private onKeyDown(e: KeyboardEvent) {
-        let keyDir = this.arrowKeyToVector(e.key);
+        let keyDir = this.arrowKeyToDirection(e.key);
 
         // if the key is an x axis request, don't add it to the requests if we are moving on the x axis unless there is already a y axis request
         if (keyDir.x != 0 && (this.notMoving() || this.movingOnYAxis() || this.directionRequests.y != 0)) {
@@ -33,7 +33,7 @@ export class PlayerMovementProcessor {
         }
     }
 
-    private arrowKeyToVector(key: string): Vector2 {
+    private arrowKeyToDirection(key: string): Vector2 {
         switch (key) {
             case "ArrowUp":
                 return Vector2.up();
@@ -44,8 +44,8 @@ export class PlayerMovementProcessor {
             case "ArrowRight":
                 return Vector2.right();
             default:
+                return Vector2.zero();
         }
-        return Vector2.zero();
     }
 
     public updateDirection(): Vector2 {
@@ -56,7 +56,7 @@ export class PlayerMovementProcessor {
         // at the start of the game the player has no axis; allow any direction request
         let requestedDirection = this.consumeRequestedDirection(this.notMoving());
 
-        // no direction requested, return current direction.
+        // if no direction requested, return current direction.
         if (requestedDirection.equals(Vector2.zero()))
             return this.currentDirection;
 
