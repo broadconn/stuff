@@ -3,7 +3,6 @@ import { Vector2 } from "../utils/Vector2";
 export class PlayerMovementProcessor {
     private readonly keysRecognised: string[] = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
     private _keysPressed: string[] = [];
-    public get keysPressed(): string[] { return this._keysPressed; }
 
     private moveDirection: Vector2 = new Vector2(0, 0);
 
