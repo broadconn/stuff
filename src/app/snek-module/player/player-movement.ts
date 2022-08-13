@@ -15,8 +15,8 @@ export class PlayerMovementProcessor {
         window.addEventListener('keydown', this.onKeyDown.bind(this));
     }
 
-    //adds the pressed key to the list of keys pressed
     private onKeyDown(e: KeyboardEvent) {
+        //add the pressed key to the list of keys pressed
         if (this.keysRecognised.indexOf(e.key) >= 0 && this._keysPressed.indexOf(e.key) < 0) {
             this._keysPressed.push(e.key);
         }
