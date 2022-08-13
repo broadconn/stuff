@@ -10,15 +10,17 @@ import { Snake } from './player/player';
 export class SnekModuleComponent implements AfterViewInit {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
 
+  // references
+  board: Board;
+  player: Snake;
+  drawCtx: CanvasRenderingContext2D;
+
   // game settings 
   readonly boardSizePx = 800;
   readonly numCellsWide = 21;
   readonly updateFreqMs = 200;
 
-  board: Board;
-  player: Snake;
-  drawCtx: CanvasRenderingContext2D;
-
+  // secret
   boardFloatDir: number = 1;
   boardFloatS: number = 10;
   boardFloatMag: number = 5;
