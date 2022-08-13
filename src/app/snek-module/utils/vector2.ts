@@ -15,6 +15,18 @@ export class Vector2 {
         return this.x == v.x && this.y == v.y;
     }
 
+    static up(): Vector2 {
+        return new Vector2(0, -1);
+    }
+    static down(): Vector2 {
+        return new Vector2(0, 1);
+    }
+    static left(): Vector2 {
+        return new Vector2(-1, 0);
+    }
+    static right(): Vector2 {
+        return new Vector2(1, 0);
+    }
     static zero(): Vector2 {
         return new Vector2(0, 0);
     }

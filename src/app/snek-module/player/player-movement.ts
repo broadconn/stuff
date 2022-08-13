@@ -1,15 +1,16 @@
-import { Vector2 } from "../../services/vector/vector2";
+import { Vector2 } from "../utils/vector2";
 
 // The movement style this class enacts goes like this:
 // There are two movement request slots, one for the x axis, one for the y axis.
 // These can each hold -1, 0, or 1. 
 // 0 means no request, otherwise a direction on that axis has been requested. 
 // The player can have both slots queued up. This allows for easy U-turns.
-// The processor will ensure to not queue a direction request along the current axis, unless the other axis has already been requested. 
+// The processor will consume both requests accordingly with respect to the current direction
+// The processor will also ensure to not queue a direction request along the current axis, unless the other axis has already been requested. 
 // Otherwise unexpected movements occur.
 export class PlayerMovementProcessor {
-    private directionRequests: Vector2 = new Vector2(); // Holds the current movement requests for each axis. Will be consumed with respect to the current movement direction. 
-    private currentDirection: Vector2 = Vector2.zero();
+    private directionRequests = new Vector2();
+    private currentDirection = Vector2.zero();
 
     constructor() {
         this.setupKeyListeners();
@@ -35,16 +36,16 @@ export class PlayerMovementProcessor {
     private arrowKeyToVector(key: string): Vector2 {
         switch (key) {
             case "ArrowUp":
-                return new Vector2(0, -1);
+                return Vector2.up();
             case "ArrowDown":
-                return new Vector2(0, 1);
+                return Vector2.down();
             case "ArrowLeft":
-                return new Vector2(-1, 0);
+                return Vector2.left();
             case "ArrowRight":
-                return new Vector2(1, 0);
+                return Vector2.right();
             default:
         }
-        return new Vector2(0, 0);
+        return Vector2.zero();
     }
 
     public updateDirection(): Vector2 {

@@ -1,5 +1,5 @@
 import { Board } from "../board/board";
-import { Vector2 } from "../../services/vector/vector2";
+import { Vector2 } from "../utils/vector2";
 import { PlayerMovementProcessor } from "./player-movement";
 
 export class Snake {
@@ -57,9 +57,9 @@ export class Snake {
 }
 
 class SnakeSegment {
-  private _cellPos: Vector2 = new Vector2(0, 0);
-  public get cellPos(): Vector2 { return this._cellPos; };
-  public set cellPos(value: Vector2) { this._cellPos = value; }
+  private _cellPos = Vector2.zero();
+  public get cellPos() { return this._cellPos; };
+  public set cellPos(value) { this._cellPos = value; }
 
   constructor(position: Vector2) {
     this._cellPos = position;

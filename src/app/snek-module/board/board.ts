@@ -1,8 +1,8 @@
-import { Vector2 } from "../../services/vector/vector2";
+import { Vector2 } from "../utils/vector2";
 
 export class Board {
   private drawCtx: CanvasRenderingContext2D;
-  private boardWidthPx: number; // also board height
+  private boardWidthPx: number; // is also board height
   private numCellsWide: number;
   private _cellWidthPx: number;
   public get cellWidthPx(): number { return this._cellWidthPx; }
