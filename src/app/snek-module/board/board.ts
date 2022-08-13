@@ -15,23 +15,11 @@ export class Board {
   }
 
   public draw() {
-    this.drawCtx.strokeStyle = `rgba(255,255,255,0.2)`;
-    this.drawCtx.lineWidth = 1;
-
-    //horizontal lines
     for (let i = 0; i < this.numCellsWide; i++) {
-      this.drawCtx.beginPath();
-      this.drawCtx.moveTo(i * this.cellWidthPx, 0);
-      this.drawCtx.lineTo(i * this.cellWidthPx, this.boardWidthPx);
-      this.drawCtx.stroke();
-    }
-
-    //vertical lines
-    for (let i = 0; i < this.numCellsWide; i++) {
-      this.drawCtx.beginPath();
-      this.drawCtx.moveTo(0, i * this.cellWidthPx);
-      this.drawCtx.lineTo(this.boardWidthPx, i * this.cellWidthPx);
-      this.drawCtx.stroke();
+      for (let j = 0; j < this.numCellsWide; j++) {
+        this.drawCtx.fillStyle = (i + j) % 2 == 0 ? '#d5e3db' : '#b8d2cd';
+        this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx, this._cellWidthPx);
+      }
     }
   }
 

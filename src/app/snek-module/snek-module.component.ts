@@ -20,7 +20,7 @@ export class SnekModuleComponent implements AfterViewInit {
   readonly numCellsWide = 21;
   readonly updateFreqMs = 200;
 
-  // secret
+  // secret stuff (¬‿¬)
   boardFloatDir: number = 1;
   boardFloatS: number = 10;
   boardFloatMag: number = 5;
@@ -58,16 +58,16 @@ export class SnekModuleComponent implements AfterViewInit {
   }
 
   animateBoard() {
-    this.refreshCanvas();
+    this.animateCanvas();
     this.boardFloatingAnim(0);
   }
 
   // optional timestamp parameter! Can use to get time delta between frames
-  refreshCanvas() {
+  animateCanvas() {
     this.drawCtx.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
     this.board.draw();
     this.player.draw();
-    window.requestAnimationFrame(() => this.refreshCanvas());
+    window.requestAnimationFrame(() => this.animateCanvas());
   }
 
   boardFloatingAnim(floatMagnitude: number) {
