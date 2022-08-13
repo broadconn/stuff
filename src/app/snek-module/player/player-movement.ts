@@ -1,4 +1,4 @@
-import { Vector2 } from "../utils/Vector2";
+import { Vector2 } from "../../services/vector/vector2";
 
 // The movement style this class enacts goes like this:
 // There are two movement request slots, one for the x axis, one for the y axis.
@@ -9,7 +9,7 @@ import { Vector2 } from "../utils/Vector2";
 // Otherwise unexpected movements occur.
 export class PlayerMovementProcessor {
     private directionRequests: Vector2 = new Vector2(); // Holds the current movement requests for each axis. Will be consumed with respect to the current movement direction. 
-    private currentDirection: Vector2 = new Vector2(0, 0);
+    private currentDirection: Vector2 = Vector2.zero();
 
     constructor() {
         this.setupKeyListeners();
@@ -30,7 +30,6 @@ export class PlayerMovementProcessor {
         if (keyDir.y != 0 && (this.notMoving() || this.movingOnXAxis() || this.directionRequests.x != 0)) {
             this.directionRequests.y = keyDir.y;
         }
-        console.log(this.directionRequests);
     }
 
     private arrowKeyToVector(key: string): Vector2 {
@@ -49,17 +48,15 @@ export class PlayerMovementProcessor {
     }
 
     public updateDirection(): Vector2 {
-        this.currentDirection = this.checkForNewDirection();
-        return this.currentDirection
+        return this.currentDirection = this.checkForNewDirection();
     }
 
     private checkForNewDirection(): Vector2 {
         // at the start of the game the player has no axis; allow any direction request
-        let playerNotMoving: boolean = this.currentDirection.equals(Vector2.zero());
-        let requestedDirection = this.consumeRequestedDirection(playerNotMoving);
+        let requestedDirection = this.consumeRequestedDirection(this.notMoving());
 
         // no direction requested, return current direction.
-        if (requestedDirection.x == 0 && requestedDirection.y == 0)
+        if (requestedDirection.equals(Vector2.zero()))
             return this.currentDirection;
 
         return requestedDirection;

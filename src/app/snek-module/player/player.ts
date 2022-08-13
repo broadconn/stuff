@@ -1,12 +1,12 @@
 import { Board } from "../board/board";
-import { Vector2 } from "../utils/Vector2";
+import { Vector2 } from "../../services/vector/vector2";
 import { PlayerMovementProcessor } from "./player-movement";
 
 export class Snake {
   // references
   private board: Board;
   private drawCtx: CanvasRenderingContext2D;
-  private movement: PlayerMovementProcessor;
+  private movementProcessor: PlayerMovementProcessor;
 
   // snake body
   private snakeSegments: SnakeSegment[] = [];
@@ -14,7 +14,7 @@ export class Snake {
   private headSegment: SnakeSegment;
 
   constructor(drawCtx: CanvasRenderingContext2D, board: Board) {
-    this.movement = new PlayerMovementProcessor();
+    this.movementProcessor = new PlayerMovementProcessor();
     this.board = board;
     this.drawCtx = drawCtx;
     this.segmentWidth = board.cellWidthPx * 0.8;
@@ -27,7 +27,7 @@ export class Snake {
   update() {
     //console.log("player update");
 
-    let moveDirection = this.movement.updateDirection(); // a valid direction the player has committed to moving in
+    let moveDirection = this.movementProcessor.updateDirection(); // a valid direction the player has committed to moving in
     //console.log(moveDirection);
 
     // get target location, check for any crashes 

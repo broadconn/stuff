@@ -1,5 +1,4 @@
-import { ElementRef } from "@angular/core";
-import { Vector2 } from "../utils/Vector2";
+import { Vector2 } from "../../services/vector/vector2";
 
 export class Board {
   private drawCtx: CanvasRenderingContext2D;
