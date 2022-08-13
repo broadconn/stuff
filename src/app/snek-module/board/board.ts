@@ -22,22 +22,22 @@ export class Board {
     //horizontal lines
     for (let i = 0; i < this.numCellsWide; i++) {
       this.drawCtx.beginPath();
-      this.drawCtx.moveTo(i * this._cellWidthPx, 0);
-      this.drawCtx.lineTo(i * this._cellWidthPx, this.boardWidthPx);
+      this.drawCtx.moveTo(i * this.cellWidthPx, 0);
+      this.drawCtx.lineTo(i * this.cellWidthPx, this.boardWidthPx);
       this.drawCtx.stroke();
     }
 
     //vertical lines
     for (let i = 0; i < this.numCellsWide; i++) {
       this.drawCtx.beginPath();
-      this.drawCtx.moveTo(0, i * this._cellWidthPx);
-      this.drawCtx.lineTo(this.boardWidthPx, i * this._cellWidthPx);
+      this.drawCtx.moveTo(0, i * this.cellWidthPx);
+      this.drawCtx.lineTo(this.boardWidthPx, i * this.cellWidthPx);
       this.drawCtx.stroke();
     }
   }
 
   public getCellCoord(i: number) {
-    return i * this._cellWidthPx + this._cellWidthPx / 2;
+    return i * this.cellWidthPx + this.cellWidthPx / 2;
   }
 
   public getCenterCell(): Vector2 {

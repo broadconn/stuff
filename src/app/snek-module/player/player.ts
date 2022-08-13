@@ -3,8 +3,6 @@ import { Vector2 } from "../utils/Vector2";
 import { PlayerMovementProcessor } from "./player-movement";
 
 export class Snake {
-  // input handling
-
   // references
   private board: Board;
   private drawCtx: CanvasRenderingContext2D;
@@ -14,8 +12,6 @@ export class Snake {
   private snakeSegments: SnakeSegment[] = [];
   private segmentWidth: number;
   private headSegment: SnakeSegment;
-
-  // movement
 
   constructor(drawCtx: CanvasRenderingContext2D, board: Board) {
     this.movement = new PlayerMovementProcessor();
