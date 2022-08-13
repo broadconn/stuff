@@ -36,7 +36,7 @@ export class PlayerMovementProcessor {
         if (this.moveDirection.x == 0 && this.moveDirection.y == 0)
             return requestedDirection;
 
-        // no input
+        // no input, dont change dir
         if (requestedDirection.x == 0 && requestedDirection.y == 0)
             return this.moveDirection;
 

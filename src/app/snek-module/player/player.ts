@@ -21,7 +21,7 @@ export class Snake {
     this.movement = new PlayerMovementProcessor();
     this.board = board;
     this.drawCtx = drawCtx;
-    this.segmentWidth = board.cellWidthPx * 0.9;
+    this.segmentWidth = board.cellWidthPx * 0.8;
 
     let startLocation = board.getCenterCell();
     this.headSegment = new SnakeSegment(startLocation);

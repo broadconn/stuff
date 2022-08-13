@@ -19,12 +19,15 @@ export class SnekModuleComponent implements AfterViewInit {
   player: Snake;
   drawCtx: CanvasRenderingContext2D;
 
+  canvasShiftPerc: number = 5;
+  canvasShiftS: number = 10;
+
   constructor() { }
 
   ngAfterViewInit(): void {
     this.initObjects();
-    this.startPlayerUpdateLoop();
-    this.refreshFrame();
+    this.startUpdateLoops();
+    this.animateBoard();
   }
 
   initObjects() {
@@ -42,20 +45,32 @@ export class SnekModuleComponent implements AfterViewInit {
     this.drawCtx.imageSmoothingQuality = "high";
   }
 
-  startPlayerUpdateLoop() {
+  startUpdateLoops() {
     window.setInterval(() => this.doGameUpdate(), this.updateFreqMs);
+    window.setInterval(() => this.boardFloatingAnim(), this.canvasShiftS * 1000);
   }
 
   doGameUpdate() {
     this.player.update();
   }
 
+  animateBoard() {
+    this.refreshCanvas();
+    this.boardFloatingAnim();
+  }
+
   // optional timestamp parameter! Can use to get time delta between frames
-  refreshFrame() {
+  refreshCanvas() {
     this.drawCtx.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
     this.board.draw();
     this.player.draw();
-    window.requestAnimationFrame(() => this.refreshFrame());
+    window.requestAnimationFrame(() => this.refreshCanvas());
+  }
+
+  boardFloatingAnim() {
+    this.canvasShiftPerc = -1 * this.canvasShiftPerc;
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.canvasShiftPerc}%`);
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.canvasShiftS}s`);
   }
 
   private startGame() {
