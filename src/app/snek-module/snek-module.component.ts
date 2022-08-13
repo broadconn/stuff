@@ -11,7 +11,7 @@ export class SnekModuleComponent implements AfterViewInit {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
 
   // game settings 
-  readonly boardSizePx = 500;
+  readonly boardSizePx = 800;
   readonly numCellsWide = 21;
   readonly updateFreqMs = 200;
 
@@ -19,8 +19,9 @@ export class SnekModuleComponent implements AfterViewInit {
   player: Snake;
   drawCtx: CanvasRenderingContext2D;
 
-  canvasShiftPerc: number = 5;
-  canvasShiftS: number = 10;
+  boardFloatDir: number = 1;
+  boardFloatS: number = 10;
+  boardFloatMag: number = 5;
 
   constructor() { }
 
@@ -47,7 +48,7 @@ export class SnekModuleComponent implements AfterViewInit {
 
   startUpdateLoops() {
     window.setInterval(() => this.doGameUpdate(), this.updateFreqMs);
-    window.setInterval(() => this.boardFloatingAnim(), this.canvasShiftS * 1000);
+    window.setInterval(() => this.boardFloatingAnim(this.boardFloatMag), this.boardFloatS * 1000);
   }
 
   doGameUpdate() {
@@ -56,7 +57,7 @@ export class SnekModuleComponent implements AfterViewInit {
 
   animateBoard() {
     this.refreshCanvas();
-    this.boardFloatingAnim();
+    this.boardFloatingAnim(0);
   }
 
   // optional timestamp parameter! Can use to get time delta between frames
@@ -67,10 +68,10 @@ export class SnekModuleComponent implements AfterViewInit {
     window.requestAnimationFrame(() => this.refreshCanvas());
   }
 
-  boardFloatingAnim() {
-    this.canvasShiftPerc = -1 * this.canvasShiftPerc;
-    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.canvasShiftPerc}%`);
-    this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.canvasShiftS}s`);
+  boardFloatingAnim(floatMagnitude: number) {
+    this.boardFloatDir = -1 * this.boardFloatDir;
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.boardFloatDir * floatMagnitude}%`);
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.boardFloatS}s`);
   }
 
   private startGame() {
