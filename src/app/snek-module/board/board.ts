@@ -34,4 +34,9 @@ export class Board {
     let x = Math.floor(this.numCellsWide / 2);
     return new Vector2(x, x);
   }
+
+  public cellIsValid(cell: Vector2) {
+    return cell.x >= 0 && cell.x < this.numCellsWide
+      && cell.y >= 0 && cell.y < this.numCellsWide;
+  }
 }

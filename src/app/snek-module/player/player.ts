@@ -20,35 +20,74 @@ export class Snake {
     this.segmentWidth = board.cellWidthPx * 0.9;
 
     let startLocation = board.getCenterCell();
-    this.headSegment = new SnakeSegment(null);
+    this.headSegment = new SnakeSegment(null, true);
     this.headSegment.setPosition(startLocation);
     this.snakeSegments.push(this.headSegment);
 
     this.attachSegment();
     this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
+    this.attachSegment();
   }
 
-  update() {
+  public update() {
     //console.log("player update");
 
     let moveDirection = this.movementProcessor.updateDirection(); // a valid direction the player has committed to moving in
-    //console.log(moveDirection);
+    let tgtCell = this.headSegment.cellPos.add(moveDirection);
 
     // get target location, check for any crashes 
     // check that the target location is within board bounds
-    // check that the target location is not inside any player segments
+    if (!this.board.cellIsValid(tgtCell)
+      || this.cellIsInsidePlayer(tgtCell)) {
+      this.die();
+      return;
+    }
+    // check that the target location is not inside any player segments 
 
     // if all checks pass, move the player
-    //  move body into itself
-    [...this.snakeSegments].reverse().forEach(segment => {
-      segment.followSegment();
-    });
-    //  move head segment in the move direction 
-    this.headSegment.setPosition(this.headSegment.cellPos.add(moveDirection));
-    //console.log(this.snakeSegments[0].cellPos);
+    this.moveInDirection(moveDirection);
   }
 
-  draw() {
+  private cellIsInsidePlayer(tgtCell: Vector2): boolean {
+    let collision = false;
+    this.snakeSegments.forEach(seg => {
+      if (tgtCell.equals(seg.cellPos)) {
+        collision = true;
+      }
+    });
+    return collision;
+  }
+
+  public draw() {
     // line down the snake
     let lineWidth = 20;
     this.drawCtx.strokeStyle = `rgb(0,100,100)`;
@@ -81,39 +120,58 @@ export class Snake {
     return (1 - perc) * start + perc * end;
   }
 
-  eat() {
-    // just add another segment to the segments list
+  private moveInDirection(dir: Vector2) {
+    //  move body into itself
+    [...this.snakeSegments].reverse().forEach(segment => {
+      segment.followSegment();
+    });
+    //  move head segment in the move direction 
+    this.headSegment.setPosition(this.headSegment.cellPos.add(dir));
+  }
+
+  private eat() {
+    // add another segment to the segments list
+    this.attachSegment();
+
+    //move the thing that was eaten
 
     // fire off success event for effects canvas to send off a nova blast? invert this: https://www.w3schools.com/tags/canvas_createradialgradient.asp
   }
+  private die() {
 
-  attachSegment() {
+  }
+
+  private attachSegment() {
     let lastSegment = this.snakeSegments[this.snakeSegments.length - 1];
     let newSegment = new SnakeSegment(lastSegment);
     this.snakeSegments.push(newSegment);
   }
 }
 
-//really have to refactor this for controllable vs following segments
+// TODO: refactor, kinda ugly
 class SnakeSegment {
+  private isControllable = false;
   public nextSegment: SnakeSegment | null;
   private _cellPos = Vector2.zero;
   public get cellPos() { return new Vector2(this._cellPos.x, this._cellPos.y); };
 
-  constructor(segment: SnakeSegment | null) {
+  constructor(segment: SnakeSegment | null, isControllable: boolean = false) {
     this.nextSegment = segment;
+    this.isControllable = isControllable;
     if (this.nextSegment != null)
       this._cellPos = this.nextSegment.cellPos;
   }
 
+  // intended for controllable segments (the head) only
   public setPosition(cellPos: Vector2) {
-    if (this.nextSegment != null) return; //only allow manually setting the position if it isn't following another segment
+    if (!this.isControllable) return;
     this._cellPos = cellPos;
   }
 
+  // intended to be applied from the tail to the head
   public followSegment() {
-    if (this.nextSegment == null) return;
-    this._cellPos = this.nextSegment.cellPos;
+    if (this.isControllable) return;
+    this._cellPos = this.nextSegment?.cellPos ?? this._cellPos;
   }
 }
 
