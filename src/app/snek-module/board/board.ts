@@ -17,8 +17,11 @@ export class Board {
   public draw() {
     for (let i = 0; i < this.numCellsWide; i++) {
       for (let j = 0; j < this.numCellsWide; j++) {
-        this.drawCtx.fillStyle = (i + j) % 2 == 0 ? '#d5e3db' : '#b8d2cd';
+        if ((i + j) % 2 == 0) continue;
+        this.drawCtx.fillStyle = '#acccc6';
         this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx, this._cellWidthPx);
+        this.drawCtx.fillStyle = '#b8d2cd';
+        this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx - 2, this._cellWidthPx - 2);
       }
     }
   }

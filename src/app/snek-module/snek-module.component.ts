@@ -16,8 +16,8 @@ export class SnekModuleComponent implements AfterViewInit {
   drawCtx: CanvasRenderingContext2D;
 
   // game settings 
-  readonly boardSizePx = 800;
-  readonly numCellsWide = 21;
+  readonly boardSizePx = 700;
+  readonly numCellsWide = 17;
   readonly updateFreqMs = 200;
 
   // secret stuff (¬‿¬)
