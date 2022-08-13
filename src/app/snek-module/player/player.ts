@@ -29,7 +29,10 @@ export class Snake {
   }
 
   update() {
-    let moveDirection = this.movement.updateMoveDirection(); // a valid direction the player has committed to moving in
+    //console.log("player update");
+
+    let moveDirection = this.movement.getMoveDirection(); // a valid direction the player has committed to moving in
+    //console.log(moveDirection);
 
     // get target location, check for any crashes 
     // check that the target location is within board bounds
@@ -38,6 +41,9 @@ export class Snake {
     // if all checks pass, move the player
     //  move body into itself
     //  move head segment in the move direction 
+
+    this.headSegment.cellPos = this.headSegment.cellPos.add(moveDirection);
+    //console.log(this.snakeSegments[0].cellPos);
   }
 
   draw() {

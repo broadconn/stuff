@@ -13,7 +13,7 @@ export class SnekModuleComponent implements AfterViewInit {
   // game settings 
   readonly boardSizePx = 500;
   readonly numCellsWide = 21;
-  readonly updateFreqMs = 400;
+  readonly updateFreqMs = 200;
 
   board: Board;
   player: Snake;
@@ -55,7 +55,7 @@ export class SnekModuleComponent implements AfterViewInit {
     this.drawCtx.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
     this.board.draw();
     this.player.draw();
-    window.requestAnimationFrame(() => this.refreshFrame);
+    window.requestAnimationFrame(() => this.refreshFrame());
   }
 
   private startGame() {

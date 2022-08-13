@@ -21,29 +21,45 @@ export class PlayerMovementProcessor {
         if (this.keysRecognised.indexOf(e.key) >= 0 && this._keysPressed.indexOf(e.key) < 0) {
             this._keysPressed.push(e.key);
         }
-        console.log(this._keysPressed);
+        //console.log(this._keysPressed);
     }
 
     //removes the released key from the list of keys pressed
     private onKeyUp(e: KeyboardEvent) {
-        if (this.keysRecognised.indexOf(e.key) >= 0) {
-            this._keysPressed.splice(this._keysPressed.indexOf(e.key), 1);
-        }
-        console.log(this._keysPressed);
+        // if (this.keysRecognised.indexOf(e.key) >= 0) {
+        //     this._keysPressed.splice(this._keysPressed.indexOf(e.key), 1);
+        // }
+        // console.log(this._keysPressed);
     }
 
-    public updateMoveDirection(): Vector2 {
+    public getMoveDirection(): Vector2 {
+        this.moveDirection = this.checkForNewMoveDirection();
+        return this.moveDirection
+    }
+
+    private checkForNewMoveDirection(): Vector2 {
         let requestedDirection = this.getRequestedDirection();
+        this._keysPressed = []; // clear key queue
+
+        // start of the game, allow any direction
+        if (this.moveDirection.x == 0 && this.moveDirection.y == 0)
+            return requestedDirection;
+
+        // no input
         if (requestedDirection.x == 0 && requestedDirection.y == 0)
             return this.moveDirection;
 
+        // dont allow moving backwards
         if (!this.directionChangeIsValid(requestedDirection))
             return this.moveDirection;
 
-        this.moveDirection = requestedDirection;
-        return this.moveDirection;
+        return requestedDirection;
     }
 
+    // to improve: it's easy to accidentally press a key too early, then overwrite it with your next move resulting in no direction change. This feels bad and is annoying. 
+    // suggestion: save the time pressed along with the key. 
+    //      make the threshold for which key it picks be something like within 0.1s of the update
+    //      move any other keys pressed after that to the next update's key queue
     private getRequestedDirection(): Vector2 {
         let latestKey = this._keysPressed.length == 0 ? "" : this._keysPressed[this._keysPressed.length - 1]; // get last key in the list
         switch (latestKey) {

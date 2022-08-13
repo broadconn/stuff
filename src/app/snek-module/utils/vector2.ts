@@ -5,4 +5,8 @@ export class Vector2 {
         this.x = x;
         this.y = y;
     }
+
+    add(v: Vector2): Vector2 {
+        return new Vector2(this.x + v.x, this.y + v.y);
+    }
 }
