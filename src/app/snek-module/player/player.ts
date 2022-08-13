@@ -57,7 +57,7 @@ export class Snake {
 }
 
 class SnakeSegment {
-  private _cellPos = Vector2.zero();
+  private _cellPos = Vector2.zero;
   public get cellPos() { return this._cellPos; };
   public set cellPos(value) { this._cellPos = value; }
 

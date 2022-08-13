@@ -10,7 +10,7 @@ import { Vector2 } from "../utils/vector2";
 // Otherwise unexpected movements occur.
 export class PlayerMovementProcessor {
     private directionRequests = new Vector2();
-    private currentDirection = Vector2.zero();
+    private currentDirection = Vector2.zero;
 
     constructor() {
         this.setupKeyListeners();
@@ -36,15 +36,15 @@ export class PlayerMovementProcessor {
     private arrowKeyToDirection(key: string): Vector2 {
         switch (key) {
             case "ArrowUp":
-                return Vector2.up();
+                return Vector2.up;
             case "ArrowDown":
-                return Vector2.down();
+                return Vector2.down;
             case "ArrowLeft":
-                return Vector2.left();
+                return Vector2.left;
             case "ArrowRight":
-                return Vector2.right();
+                return Vector2.right;
             default:
-                return Vector2.zero();
+                return Vector2.zero;
         }
     }
 
@@ -57,7 +57,7 @@ export class PlayerMovementProcessor {
         let requestedDirection = this.consumeRequestedDirection(this.notMoving());
 
         // if no direction requested, return current direction.
-        if (requestedDirection.equals(Vector2.zero()))
+        if (requestedDirection.equals(Vector2.zero))
             return this.currentDirection;
 
         return requestedDirection;
@@ -82,11 +82,11 @@ export class PlayerMovementProcessor {
             }
         }
 
-        return Vector2.zero();
+        return Vector2.zero;
     }
 
     private notMoving(): boolean {
-        return this.currentDirection.equals(Vector2.zero());
+        return this.currentDirection.equals(Vector2.zero);
     }
 
     private movingOnXAxis(): boolean {
