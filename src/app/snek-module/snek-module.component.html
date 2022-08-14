@@ -3,7 +3,7 @@
         <div *ngIf="this.gameControl?.onMainMenu ?? false" class="menu-text">
             Press any arrow key to start! :D
         </div>
-        <div *ngIf="this.gameControl?.isGameOver ?? false" class="menu-text">
+        <div *ngIf="this.gameControl?.isGameOver ?? false" class="menu-text text-light">
             <div class="score-text">Score: {{this.gameControl.score}}</div>
             <h1>GAME OVER</h1>
             Press space to reset
