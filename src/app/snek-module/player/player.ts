@@ -127,7 +127,7 @@ export class Snake {
     });
 
     // line down the snake
-    let lineWidth = this.snakeHeadWidth * 0.8;
+    let lineWidth = this.snakeHeadWidth * 0.7;
     this.drawCtx.strokeStyle = `rgb(0,100,100)`;
     this.drawCtx.lineWidth = lineWidth;
     this.drawCtx.lineJoin = 'round';
@@ -150,8 +150,8 @@ export class Snake {
       let perc = Math.max(0, 1 - i / 5);
       this.drawCtx.fillStyle = `rgb(${MyMath.lerp(headDarkRGB.r, headLightRGB.r, perc)}, ${MyMath.lerp(headDarkRGB.g, headLightRGB.g, perc)}, ${MyMath.lerp(headDarkRGB.b, headLightRGB.b, perc)})`;
 
-      let width = this.snakeHeadWidth * (1 - (i / 10));
-      width = Math.max(width, lineWidth * 1.2);
+      let width = this.snakeHeadWidth * (1 - (i / 2));
+      width = Math.max(width, this.snakeHeadWidth * 0.9);
       let x = this.gameControl.board.getBoardPos(segment.drawnPos.x) - width / 2;
       let y = this.gameControl.board.getBoardPos(segment.drawnPos.y) - width / 2;
       this.drawCtx.fillRect(x, y, width, width);

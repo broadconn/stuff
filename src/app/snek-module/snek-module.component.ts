@@ -11,7 +11,7 @@ export class SnekModuleComponent implements OnInit, AfterViewInit {
   drawingContext: CanvasRenderingContext2D;
   gameControl: GameController;
 
-  readonly boardSizePx = 800;
+  readonly boardSizePx = 700;
   readonly boardFloatMag: number = 5;
   readonly boardFloatS: number = 10;
   boardFloatDir: number = 1;
