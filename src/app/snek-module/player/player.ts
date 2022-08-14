@@ -105,7 +105,7 @@ export class Snake {
   }
 
   private eat() {
-    this.prey.enabled = false;
+    this.prey.getEaten();
     this.grow();
   }
 
@@ -131,6 +131,7 @@ export class Snake {
     this.drawCtx.strokeStyle = `rgb(0,100,100)`;
     this.drawCtx.lineWidth = lineWidth;
     this.drawCtx.lineJoin = 'round';
+    this.drawCtx.lineCap = 'round';
     this.drawCtx.beginPath();
     this.drawCtx.moveTo(this.gameControl.board.getBoardPos(this.snakeSegments[this.snakeSegments.length - 1].drawnPos.x), this.gameControl.board.getBoardPos(this.snakeSegments[this.snakeSegments.length - 1].drawnPos.y));
     [...this.snakeSegments].reverse().forEach(segment => {
@@ -147,14 +148,26 @@ export class Snake {
     // draw backwards so the head is drawn on top of the tail / body
     for (let i = this.snakeSegments.length - 1; i >= 0; i--) {
       let segment = this.snakeSegments[i];
-      let perc = Math.max(0, 1 - i / 5);
-      this.drawCtx.fillStyle = `rgb(${MyMath.lerp(headDarkRGB.r, headLightRGB.r, perc)}, ${MyMath.lerp(headDarkRGB.g, headLightRGB.g, perc)}, ${MyMath.lerp(headDarkRGB.b, headLightRGB.b, perc)})`;
+      let colorPerc = Math.max(0, 1 - i / 5);
+      this.drawCtx.fillStyle = `rgb(${MyMath.lerp(headDarkRGB.r, headLightRGB.r, colorPerc)}, ${MyMath.lerp(headDarkRGB.g, headLightRGB.g, colorPerc)}, ${MyMath.lerp(headDarkRGB.b, headLightRGB.b, colorPerc)})`;
 
-      let width = this.snakeHeadWidth * (1 - (i / 2));
-      width = Math.max(width, this.snakeHeadWidth * 0.9);
+      //scale
+      let bodySizeMin = this.snakeHeadWidth * 0.3;
+      let bodySizeDiminishment = (i / 12);
+      let width = this.snakeHeadWidth * (1 - bodySizeDiminishment);
+      width = Math.max(bodySizeMin, width);
+
+      //position
       let x = this.gameControl.board.getBoardPos(segment.drawnPos.x) - width / 2;
       let y = this.gameControl.board.getBoardPos(segment.drawnPos.y) - width / 2;
-      this.drawCtx.fillRect(x, y, width, width);
+
+      // rotation 
+      let halfWidth = width / 2;
+      this.drawCtx.save();
+      this.drawCtx.translate(x + halfWidth, y + halfWidth);
+      this.drawCtx.rotate((45) * Math.PI / 180);
+      this.drawCtx.fillRect(-halfWidth, -halfWidth, width, width);
+      this.drawCtx.restore();
     };
   }
 }
