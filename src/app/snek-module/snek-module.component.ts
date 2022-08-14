@@ -51,14 +51,17 @@ export class SnekModuleComponent implements OnInit, AfterViewInit {
     this.timeLastFrame = timestamp;
     timeDeltaS /= 1000;
 
+    let canvasY = Math.sin(Date.now() / 5000) * this.boardFloatMag;
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${canvasY}%`);
+
     this.drawingContext.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
     this.gameControl.draw(timeDeltaS);
     window.requestAnimationFrame((timestamp) => this.animateCanvas(timestamp));
   }
 
   boardFloatingAnim(floatMagnitude: number) {
-    this.boardFloatDir = -1 * this.boardFloatDir;
-    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.boardFloatDir * floatMagnitude}%`);
-    this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.boardFloatS}s`);
+    // this.boardFloatDir = -1 * this.boardFloatDir;
+    // this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.boardFloatDir * floatMagnitude}%`);
+    // this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.boardFloatS}s`);
   }
 }

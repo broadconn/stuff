@@ -49,8 +49,9 @@
 .score-text {
     font-size: 30px;  
 }
-.info-text {     
+.menu-text {     
     font-size: 30px;  
+    text-shadow: 1px 5px 12px rgba(255, 255, 255, 0.534);
 } 
 
 #game-text-container { 
@@ -69,5 +70,5 @@
 #ingame-score{
     margin-top: auto;
     margin-bottom: 10px;
-    bottom: 0;
+    bottom: 0; 
 }

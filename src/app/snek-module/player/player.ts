@@ -15,7 +15,7 @@ export class Snake {
   private snakeSegments: SnakeSegment[] = [];
   private snakeHeadSegment: SnakeSegment;
   private snakeHeadWidth: number;
-  private readonly movementAntiSmooth = 15;
+  private readonly movementAntiSmooth = 12;
 
   // events
   public deathEvent: Subject<boolean> = new Subject<boolean>();
@@ -30,7 +30,7 @@ export class Snake {
     this.drawCtx = drawCtx;
     this.gameControl = gameControl;
     this.movementProcessor = new PlayerMovementProcessor();
-    this.snakeHeadWidth = this.gameControl.board.cellWidthPx * 0.9;
+    this.snakeHeadWidth = this.gameControl.board.cellWidthPx * 1;
     this.snakeHeadSegment = new SnakeSegment(null, true);
 
     this.reset();
@@ -127,7 +127,7 @@ export class Snake {
     });
 
     // line down the snake
-    let lineWidth = this.snakeHeadWidth * 0.5;
+    let lineWidth = this.snakeHeadWidth * 0.8;
     this.drawCtx.strokeStyle = `rgb(0,100,100)`;
     this.drawCtx.lineWidth = lineWidth;
     this.drawCtx.lineJoin = 'round';
