@@ -1,9 +1,12 @@
-import { Vector2 } from "../utils/vector2";
+import { Vector2 } from "../utils/utils";
 
 export class Board {
   private drawCtx: CanvasRenderingContext2D;
   private boardWidthPx: number; // is also board height
   private numCellsWide: number;
+  private tileColor = '#b8d2cd';
+  private tileShadowColor = '#acccc6';
+  private tileShadowVisiblePx = 2;
   private _cellWidthPx: number;
   public get cellWidthPx(): number { return this._cellWidthPx; }
 
@@ -14,20 +17,22 @@ export class Board {
     this._cellWidthPx = this.boardWidthPx / numCellsWide;
   }
 
-  public draw() {
+  public draw(timeDelta: number) {
     for (let i = 0; i < this.numCellsWide; i++) {
       for (let j = 0; j < this.numCellsWide; j++) {
         if ((i + j) % 2 == 0) continue;
-        this.drawCtx.fillStyle = '#acccc6';
+        // shadow tile
+        this.drawCtx.fillStyle = this.tileShadowColor;
         this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx, this._cellWidthPx);
-        this.drawCtx.fillStyle = '#b8d2cd';
-        this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx - 2, this._cellWidthPx - 2);
+        // actual tile
+        this.drawCtx.fillStyle = this.tileColor;
+        this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx - this.tileShadowVisiblePx, this._cellWidthPx - this.tileShadowVisiblePx);
       }
     }
   }
 
-  public getCellCoord(i: number) {
-    return i * this.cellWidthPx + this.cellWidthPx / 2;
+  public getBoardPos(cell: number) {
+    return cell * this.cellWidthPx + this.cellWidthPx / 2;
   }
 
   public getCenterCell(): Vector2 {
@@ -35,7 +40,7 @@ export class Board {
     return new Vector2(x, x);
   }
 
-  public cellIsValid(cell: Vector2) {
+  public cellIsInsideBoard(cell: Vector2) {
     return cell.x >= 0 && cell.x < this.numCellsWide
       && cell.y >= 0 && cell.y < this.numCellsWide;
   }

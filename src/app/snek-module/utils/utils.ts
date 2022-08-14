@@ -7,6 +7,11 @@ export class Vector2 {
         this.y = y;
     }
 
+    set(v: Vector2) {
+        this.x = v.x;
+        this.y = v.y;
+    }
+
     add(v: Vector2): Vector2 {
         return new Vector2(this.x + v.x, this.y + v.y);
     }
@@ -29,5 +34,11 @@ export class Vector2 {
     }
     static get zero(): Vector2 {
         return new Vector2(0, 0);
+    }
+}
+
+export class MyMath {
+    public static lerp(start: number, end: number, perc: number) {
+        return start * (1 - perc) + end * perc;
     }
 }

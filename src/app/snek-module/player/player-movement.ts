@@ -1,4 +1,4 @@
-import { Vector2 } from "../utils/vector2";
+import { Vector2 } from "../utils/utils";
 
 // The movement style this class enacts goes like this:
 // There are two movement request slots, one for the x axis, one for the y axis.
@@ -21,19 +21,20 @@ export class PlayerMovementProcessor {
     }
 
     private onKeyDown(e: KeyboardEvent) {
-        let keyDir = this.arrowKeyToDirection(e.key);
+        let keyDir = this.keyToDirection(e.key);
+        let allowAnyDirectionRequest = this.notMoving(); // e.g. start of the game, player has no direction
 
         // if the key is an x axis request, don't add it to the requests if we are moving on the x axis unless there is already a y axis request
-        if (keyDir.x != 0 && (this.notMoving() || this.movingOnYAxis() || this.directionRequests.y != 0)) {
+        if (keyDir.x != 0 && (allowAnyDirectionRequest || this.movingOnYAxis() || this.directionRequests.y != 0)) {
             this.directionRequests.x = keyDir.x;
         }
         // if the key is a y axis request, don't add it to the requests if we are moving on the y axis unless there is already an x axis request
-        if (keyDir.y != 0 && (this.notMoving() || this.movingOnXAxis() || this.directionRequests.x != 0)) {
+        if (keyDir.y != 0 && (allowAnyDirectionRequest || this.movingOnXAxis() || this.directionRequests.x != 0)) {
             this.directionRequests.y = keyDir.y;
         }
     }
 
-    private arrowKeyToDirection(key: string): Vector2 {
+    private keyToDirection(key: string): Vector2 {
         switch (key) {
             case "ArrowUp":
                 return Vector2.up;

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Board } from './board/board';
 import { Snake } from './player/player';
 
@@ -18,12 +18,13 @@ export class SnekModuleComponent implements AfterViewInit {
   // game settings 
   readonly boardSizePx = 700;
   readonly numCellsWide = 17;
-  readonly updateFreqMs = 200;
+  readonly updateFreqMs = 300;
+  gameRunning = false;
 
   // secret stuff (¬‿¬)
   boardFloatDir: number = 1;
-  boardFloatS: number = 10;
   boardFloatMag: number = 5;
+  boardFloatS: number = 10;
 
   constructor() { }
 
@@ -44,8 +45,6 @@ export class SnekModuleComponent implements AfterViewInit {
     gameCanvas.nativeElement.height = this.boardSizePx;
 
     this.drawCtx = gameCanvas.nativeElement.getContext('2d');
-    this.drawCtx.imageSmoothingEnabled = true;
-    this.drawCtx.imageSmoothingQuality = "high";
   }
 
   startUpdateLoops() {
@@ -58,16 +57,20 @@ export class SnekModuleComponent implements AfterViewInit {
   }
 
   animateBoard() {
-    this.animateCanvas();
+    this.animateCanvas(0);
     this.boardFloatingAnim(0);
   }
 
-  // optional timestamp parameter! Can use to get time delta between frames
-  animateCanvas() {
+  private lastTimeStamp: number;
+  animateCanvas(timestamp: number) {
+    let timeDeltaS = timestamp - this.lastTimeStamp;
+    timeDeltaS /= 1000;
+    this.lastTimeStamp = timestamp;
+
     this.drawCtx.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
-    this.board.draw();
-    this.player.draw();
-    window.requestAnimationFrame(() => this.animateCanvas());
+    this.board.draw(timeDeltaS);
+    this.player.draw(timeDeltaS);
+    window.requestAnimationFrame((timestamp) => this.animateCanvas(timestamp));
   }
 
   boardFloatingAnim(floatMagnitude: number) {

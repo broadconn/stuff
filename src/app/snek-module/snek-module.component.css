@@ -1,4 +1,4 @@
-#snek-body {
+#game-bg {
     width: 100vw;
     height: 100vh;
     background-color: #dbe5de;
@@ -25,6 +25,13 @@
     transition: transform var(--canvas-shifttime) ease-in-out;
 }
 
-#player {
-    display: none;
-}
+#game-text-container {
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+} 
+#info-text { 
+    height: 100%;   
+} 
