@@ -14,26 +14,34 @@ export class GameController {
     public get onMainMenu() { return this._gameState == GameState.MainMenu; }
     public get isPlaying() { return this._gameState == GameState.Playing; }
     public get isGameOver() { return this._gameState == GameState.GameOver; }
+    public get playerHasWon() { return this._gameState == GameState.Victorious; }
 
     gameIntervalId: number;
 
     // game settings 
-    readonly numCellsWide = 17;
-    readonly updateFreqMs = 200;
+    readonly boardNumCellsWide = 3;
+    readonly updateFreqMs = 250;
     readonly arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     readonly spaceCode = "Space";
 
     constructor(drawCtx: CanvasRenderingContext2D, boardSizePx: number) {
         this._gameState = GameState.MainMenu;
 
-        this.board = new Board(drawCtx, this.numCellsWide, boardSizePx);
-        this.food = new FoodDispenser(drawCtx, this);
-        this.player = new Snake(drawCtx, this);
-        this.player.deathSubject.subscribe(() => {
-            this.gameOver();
+        this.board = new Board(drawCtx, this.boardNumCellsWide, boardSizePx);
+
+        this.player = new Snake(this, drawCtx);
+        this.player.deathEvent.subscribe(() => {
+            this.gameOver(false);
+        });
+        this.player.ateFoodEvent.subscribe(() => {
+            this.onFoodEaten();
         });
 
+        this.food = new FoodDispenser(this, drawCtx);
+
         this.setUpKeyboardListener();
+
+        this.resetGame();
     }
 
     private setUpKeyboardListener() {
@@ -49,25 +57,27 @@ export class GameController {
                     this.startGame(e);
                 break;
             case GameState.GameOver:
+            case GameState.Victorious:
                 if (e.code == this.spaceCode)
                     this.goToMainMenu();
                 break;
         }
     }
 
+    // order matters!
     public draw(timeDeltaS: number) {
         this.board.draw(timeDeltaS);
         this.player.draw(timeDeltaS);
+        this.food.draw(timeDeltaS);
     }
 
     private startGame(e: KeyboardEvent) {
-        this.player.resetForStart();
         this.player.onKeyDown(e);
         this._gameState = GameState.Playing;
         this.startUpdateLoop();
     }
 
-    startUpdateLoop() {
+    private startUpdateLoop() {
         this.gameIntervalId = window.setInterval(() => this.doGameUpdate(), this.updateFreqMs);
     }
 
@@ -75,28 +85,42 @@ export class GameController {
         this.player.update();
     }
 
-    private gameOver() {
-        this._gameState = GameState.GameOver;
+    private gameOver(won: boolean) {
+        this._gameState = won ? GameState.Victorious : GameState.GameOver;
         window.clearInterval(this.gameIntervalId);
     }
 
     private goToMainMenu() {
         this._gameState = GameState.MainMenu;
-        this.player.resetForStart();
-        this.score = 0;
+        this.resetGame();
     }
 
-    public onFoodEaten() {
-        // spawn a new food
-        this.food.spawnNewFood();
+    // care! order matters!
+    private resetGame() {
+        this.food.reset();
+        this.board.reset();
+        this.player.reset();
+        this.score = 0;
+        this.spawnFood();
+    }
 
-        // increment points
+    private spawnFood() {
+        let newFood = this.food.spawnNewFood();
+        this.player.setFoodCell(newFood);
+    }
+    public onFoodEaten() {
         this.score++;
+        let numCellsLeft = this.board.getUnoccupiedCells().length;
+        if (numCellsLeft > 0)
+            this.spawnFood();
+        else
+            this.gameOver(true);
     }
 }
 
 enum GameState {
     MainMenu,
     Playing,
-    GameOver
+    GameOver,
+    Victorious
 }

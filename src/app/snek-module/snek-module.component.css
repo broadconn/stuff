@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka One&display=swap');
 
+* { 
+    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
+}
+
 #game-bg {
     width: 100vw;
     height: 100vh; 
@@ -31,7 +35,6 @@
 }
 
 #menu-text-container {
-    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
     z-index: 1;
     width: 100vw;
     height: 100vh;
@@ -50,20 +53,21 @@
     font-size: 30px;  
 } 
 
-#game-text-container {
-    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
+#game-text-container { 
     z-index: 1;
     width: 100vw;
     height: 100vh;
     position: absolute;
-    text-align: left; 
     font-size: 30px;  
 
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
+    text-align: center; 
+} 
 #ingame-score{
-
+    margin-top: auto;
+    margin-bottom: 10px;
+    bottom: 0;
 }

@@ -9,21 +9,18 @@ import { GameController } from './game/game-controller';
 export class SnekModuleComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
   drawingContext: CanvasRenderingContext2D;
-
   gameControl: GameController;
-  private timeLastFrame: number;
 
   readonly boardSizePx = 700;
   readonly boardFloatMag: number = 5;
   readonly boardFloatS: number = 10;
   boardFloatDir: number = 1;
 
-  constructor() {
-  }
+  private timeLastFrame: number;
 
-  ngOnInit(): void {
-    this.gameControl = new GameController(this.drawingContext, this.boardSizePx);
-  }
+  constructor() { }
+
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     this.initObjects();
