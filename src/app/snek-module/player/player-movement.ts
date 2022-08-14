@@ -4,36 +4,28 @@ import { Vector2 } from "../utils/utils";
 // There are two movement request slots, one for the x axis, one for the y axis.
 // These can each hold -1, 0, or 1. 
 // 0 means no request, otherwise a direction on that axis has been requested. 
-// The player can have both slots queued up. This allows for easy U-turns.
-// The processor will consume both requests accordingly with respect to the current direction
+// The player can have both slots queued up. This allows the player to queue up a U-turn.
+// The processor will enact both requests accordingly with respect to the current direction
 // The processor will also ensure to not queue a direction request along the current axis, unless the other axis has already been requested. 
-// Otherwise unexpected movements occur.
 export class PlayerMovementProcessor {
     private directionRequests = new Vector2();
     private currentDirection = Vector2.zero;
 
-    constructor() {
-        this.setupKeyListeners();
-    }
+    constructor() { }
 
-    private setupKeyListeners() {
-        window.addEventListener('keydown', this.onKeyDown.bind(this));
-    }
+    public onKeyDown(e: KeyboardEvent) {
+        let dirRequest = this.keyToDirection(e.key);
+        let allowAnyDirectionRequest = !this.isMoving(); // e.g. start of the game, player has no direction
 
-    private onKeyDown(e: KeyboardEvent) {
-        let keyDir = this.keyToDirection(e.key);
-        let allowAnyDirectionRequest = this.notMoving(); // e.g. start of the game, player has no direction
-
-        // if the key is an x axis request, don't add it to the requests if we are moving on the x axis unless there is already a y axis request
-        if (keyDir.x != 0 && (allowAnyDirectionRequest || this.movingOnYAxis() || this.directionRequests.y != 0)) {
-            this.directionRequests.x = keyDir.x;
+        // if the key is an x axis request, only add it to the x requests if we are moving on the y axis (unless there is already a y axis request)
+        if (dirRequest.x && (allowAnyDirectionRequest || this.movingOnYAxis() || this.directionRequests.y)) {
+            this.directionRequests.x = dirRequest.x;
         }
-        // if the key is a y axis request, don't add it to the requests if we are moving on the y axis unless there is already an x axis request
-        if (keyDir.y != 0 && (allowAnyDirectionRequest || this.movingOnXAxis() || this.directionRequests.x != 0)) {
-            this.directionRequests.y = keyDir.y;
+        // if the key is a y axis request, only add it to the y requests if we are moving on the x axis (unless there is already an x axis request)
+        if (dirRequest.y && (allowAnyDirectionRequest || this.movingOnXAxis() || this.directionRequests.x)) {
+            this.directionRequests.y = dirRequest.y;
         }
     }
-
     private keyToDirection(key: string): Vector2 {
         switch (key) {
             case "ArrowUp":
@@ -52,9 +44,8 @@ export class PlayerMovementProcessor {
     public updateDirection(): Vector2 {
         return this.currentDirection = this.checkForNewDirection();
     }
-
     private checkForNewDirection(): Vector2 {
-        let canMoveAnyDirection = this.notMoving(); // at the start of the game the player has no direction; allow any direction request
+        let canMoveAnyDirection = !this.isMoving(); // at the start of the game the player has no direction; allow any direction request
         let requestedDirection = this.consumeRequestedDirection(canMoveAnyDirection);
 
         // if no direction requested, return current direction.
@@ -63,11 +54,10 @@ export class PlayerMovementProcessor {
 
         return requestedDirection;
     }
-
     private consumeRequestedDirection(ignoreCurrentDirection: boolean): Vector2 {
         // if we are moving on the x axis, check for y axis requests
         if (this.movingOnXAxis() || ignoreCurrentDirection) {
-            if (this.directionRequests.y != 0) {
+            if (this.directionRequests.y) {
                 let requestedDir = new Vector2(0, this.directionRequests.y);
                 this.directionRequests.y = 0; //consume >:D
                 return requestedDir;
@@ -76,7 +66,7 @@ export class PlayerMovementProcessor {
 
         // if we are moving on the y axis, check for x axis requests
         if (this.movingOnYAxis() || ignoreCurrentDirection) {
-            if (this.directionRequests.x != 0) {
+            if (this.directionRequests.x) {
                 let requestedDir = new Vector2(this.directionRequests.x, 0);
                 this.directionRequests.x = 0; //consume >:D
                 return requestedDir;
@@ -86,8 +76,8 @@ export class PlayerMovementProcessor {
         return Vector2.zero;
     }
 
-    private notMoving(): boolean {
-        return this.currentDirection.equals(Vector2.zero);
+    private isMoving(): boolean {
+        return !this.currentDirection.equals(Vector2.zero);
     }
 
     private movingOnXAxis(): boolean {

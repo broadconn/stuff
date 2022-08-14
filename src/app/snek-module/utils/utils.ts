@@ -1,3 +1,9 @@
+export class MyMath {
+    public static lerp(start: number, end: number, perc: number) {
+        return start * (1 - perc) + end * perc;
+    }
+}
+
 export class Vector2 {
     x: number;
     y: number;
@@ -34,11 +40,5 @@ export class Vector2 {
     }
     static get zero(): Vector2 {
         return new Vector2(0, 0);
-    }
-}
-
-export class MyMath {
-    public static lerp(start: number, end: number, perc: number) {
-        return start * (1 - perc) + end * perc;
     }
 }

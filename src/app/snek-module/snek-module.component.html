@@ -1,6 +1,6 @@
 <div id="game-bg">  
     <div id="game-text-container">
-        <div *ngIf="!gameRunning" id="info-text">
+        <div *ngIf="!this.gameControl?.gameRunning ?? false" id="info-text">
             Press any arrow key to start! :D
         </div>
     </div>
