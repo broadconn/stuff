@@ -5,7 +5,7 @@ import { Snake } from "../player/player";
 export class GameController {
     public player: Snake;
     public board: Board;
-    private food: FoodDispenser;
+    private preyDispenser: FoodDispenser;
 
     score: number = 0;
 
@@ -19,7 +19,7 @@ export class GameController {
     gameIntervalId: number;
 
     // game settings 
-    readonly boardNumCellsWide = 3;
+    readonly boardNumCellsWide = 9;
     readonly updateFreqMs = 250;
     readonly arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     readonly spaceCode = "Space";
@@ -33,11 +33,11 @@ export class GameController {
         this.player.deathEvent.subscribe(() => {
             this.gameOver(false);
         });
-        this.player.ateFoodEvent.subscribe(() => {
-            this.onFoodEaten();
+        this.player.atePreyEvent.subscribe(() => {
+            this.onPreyEaten();
         });
 
-        this.food = new FoodDispenser(this, drawCtx);
+        this.preyDispenser = new FoodDispenser(this, drawCtx);
 
         this.setUpKeyboardListener();
 
@@ -68,7 +68,7 @@ export class GameController {
     public draw(timeDeltaS: number) {
         this.board.draw(timeDeltaS);
         this.player.draw(timeDeltaS);
-        this.food.draw(timeDeltaS);
+        this.preyDispenser.draw(timeDeltaS);
     }
 
     private startGame(e: KeyboardEvent) {
@@ -97,22 +97,22 @@ export class GameController {
 
     // care! order matters!
     private resetGame() {
-        this.food.reset();
+        this.preyDispenser.reset();
         this.board.reset();
         this.player.reset();
         this.score = 0;
-        this.spawnFood();
+        this.spawnPrey();
     }
 
-    private spawnFood() {
-        let newFood = this.food.spawnNewFood();
-        this.player.setFoodCell(newFood);
+    private spawnPrey() {
+        let newPrey = this.preyDispenser.spawnNewPrey();
+        this.player.setPrey(newPrey);
     }
-    public onFoodEaten() {
+    public onPreyEaten() {
         this.score++;
         let numCellsLeft = this.board.getUnoccupiedCells().length;
         if (numCellsLeft > 0)
-            this.spawnFood();
+            this.spawnPrey();
         else
             this.gameOver(true);
     }

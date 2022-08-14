@@ -6,7 +6,7 @@ export class FoodDispenser {
 
     constructor(private gameControl: GameController, private drawCtx: CanvasRenderingContext2D) { }
 
-    public spawnNewFood(): Food {
+    public spawnNewPrey(): Food {
         let cell = this.getFreeBoardCell();
         let food = new Food(cell);
         this.foods.push(food);
