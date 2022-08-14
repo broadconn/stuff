@@ -1,8 +1,8 @@
-import { Observable, Subject } from "rxjs";
-import { Board } from "../board/board";
+import { Subject } from "rxjs";
 import { GameController } from "../game/game-controller";
 import { MyMath, Vector2 } from "../utils/utils";
 import { PlayerMovementProcessor } from "./player-movement";
+import { SnakeSegment } from "./snake-segment";
 
 export class Snake {
   // references  
@@ -17,6 +17,7 @@ export class Snake {
 
   // events
   public deathSubject: Subject<boolean> = new Subject<boolean>();
+  public ateFoodSubject: Subject<boolean> = new Subject<boolean>();
 
   constructor(drawCtx: CanvasRenderingContext2D, gameControl: GameController) {
     this.drawCtx = drawCtx;
@@ -28,6 +29,25 @@ export class Snake {
     this.resetForStart();
   }
 
+  public resetForStart() {
+    this.snakeSegments = [];
+    this.snakeHeadSegment.moveToCell(this.gameControl.board.getCenterCell(), true);
+    this.snakeSegments.push(this.snakeHeadSegment);
+    this.movementProcessor.reset();
+
+    // starting snake length
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+    this.growSegment();
+  }
+
   public onKeyDown(e: KeyboardEvent) {
     this.movementProcessor.onKeyDown(e);
   }
@@ -37,8 +57,7 @@ export class Snake {
     let tgtCell = this.snakeHeadSegment.tgtCellPos.add(moveDirection); // the cell the player will try to move into
 
     // check for deth D:
-    if (!this.gameControl.board.cellIsInsideBoard(tgtCell)
-      || this.cellIsInsidePlayer(tgtCell)) {
+    if (!this.gameControl.board.cellIsOnBoard(tgtCell) || this.cellIsInsidePlayer(tgtCell)) {
       this.die();
     }
 
@@ -62,6 +81,21 @@ export class Snake {
     this.snakeHeadSegment.moveToCell(this.snakeHeadSegment.tgtCellPos.add(dir));
   }
 
+  private die() {
+    this.deathSubject.next(true);
+  }
+
+  private eat() {
+    this.growSegment();
+    this.ateFoodSubject.next(true);
+  }
+
+  private growSegment() {
+    let lastSegment = this.snakeSegments[this.snakeSegments.length - 1];
+    let newSegment = new SnakeSegment(lastSegment);
+    this.snakeSegments.push(newSegment);
+  }
+
   public draw(timeDelta: number) {
     // update the snake's drawn position
     this.snakeSegments.forEach((segment, i) => {
@@ -70,7 +104,7 @@ export class Snake {
     });
 
     // line down the snake
-    let lineWidth = 20;
+    let lineWidth = this.snakeHeadWidth * 0.5;
     this.drawCtx.strokeStyle = `rgb(0,100,100)`;
     this.drawCtx.lineWidth = lineWidth;
     this.drawCtx.lineCap = 'round';
@@ -98,83 +132,6 @@ export class Snake {
       let y = this.gameControl.board.getBoardPos(segment.drawCellPos.y) - width / 2;
       this.drawCtx.fillRect(x, y, width, width);
     };
-  }
-
-  private eat() {
-    this.growSegment();
-    this.gameControl.onFoodEaten();
-  }
-
-  private die() {
-    console.log("player died?");
-    this.deathSubject.next(true);
-  }
-
-  private growSegment() {
-    let lastSegment = this.snakeSegments[this.snakeSegments.length - 1];
-    let newSegment = new SnakeSegment(lastSegment);
-    this.snakeSegments.push(newSegment);
-  }
-
-  public resetForStart() {
-    this.snakeSegments = [];
-    this.snakeHeadSegment.moveToCell(this.gameControl.board.getCenterCell(), true);
-    this.snakeSegments.push(this.snakeHeadSegment);
-
-    // starting snake length
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-    this.growSegment();
-  }
-}
-
-// TODO: refactor, kinda ugly. Separate head handling from body handling.
-class SnakeSegment {
-  private isControllable = false; // only the head of the snake should be controllable.
-  public nextSegment: SnakeSegment | null;
-
-  // the cell the snake will move into
-  private _tgtCellPos = Vector2.zero;
-  public get tgtCellPos() { return new Vector2(this._tgtCellPos.x, this._tgtCellPos.y); };
-
-  // the smoothed position used for drawing only
-  private _drawCellPos = Vector2.zero;
-  public get drawCellPos() { return new Vector2(this._drawCellPos.x, this._drawCellPos.y); };
-
-  constructor(segment: SnakeSegment | null, isControllable: boolean = false) {
-    this.nextSegment = segment;
-    this.isControllable = isControllable;
-
-    this._tgtCellPos = this.nextSegment?.tgtCellPos ?? this._tgtCellPos;
-    this._drawCellPos.set(this._tgtCellPos);
-  }
-
-  // intended for controllable segments (the head) only
-  public moveToCell(cellPos: Vector2, instant: boolean = false) {
-    if (!this.isControllable) return;
-    this._tgtCellPos = cellPos;
-
-    if (instant)
-      this._drawCellPos = this._tgtCellPos;
-  }
-
-  // intended to be applied from the tail to the head
-  public followSegment() {
-    if (!this.nextSegment) return;
-    this._tgtCellPos = this.nextSegment.tgtCellPos;
-  }
-
-  public moveDrawPosTowardsTgtPos(timeDelta: number) {
-    if (isNaN(timeDelta)) timeDelta = 0;
-    this._drawCellPos.x = MyMath.lerp(this._drawCellPos.x, this.tgtCellPos.x, Math.min(timeDelta, 1));
-    this._drawCellPos.y = MyMath.lerp(this._drawCellPos.y, this.tgtCellPos.y, Math.min(timeDelta, 1));
   }
 }
 

@@ -87,4 +87,9 @@ export class PlayerMovementProcessor {
     private movingOnYAxis(): boolean {
         return this.currentDirection.y != 0;
     }
+
+    public reset() {
+        this.directionRequests = new Vector2();
+        this.currentDirection = Vector2.zero;
+    }
 }

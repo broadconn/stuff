@@ -13,6 +13,12 @@ export class Vector2 {
         this.y = y;
     }
 
+    round(): Vector2 {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        return this;
+    }
+
     set(v: Vector2) {
         this.x = v.x;
         this.y = v.y;

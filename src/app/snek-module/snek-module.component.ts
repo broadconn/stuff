@@ -1,30 +1,33 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Board } from './board/board';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { GameController } from './game/game-controller';
-import { Snake } from './player/player';
 
 @Component({
   selector: 'app-snek-module',
   templateUrl: './snek-module.component.html',
   styleUrls: ['./snek-module.component.css']
 })
-export class SnekModuleComponent implements AfterViewInit {
+export class SnekModuleComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
   drawingContext: CanvasRenderingContext2D;
 
   gameControl: GameController;
-  private lastFrameTime: number;
+  private timeLastFrame: number;
 
   readonly boardSizePx = 700;
+  readonly boardFloatMag: number = 5;
+  readonly boardFloatS: number = 10;
   boardFloatDir: number = 1;
-  boardFloatMag: number = 5;
-  boardFloatS: number = 10;
 
-  constructor() { }
+  constructor() {
+  }
+
+  ngOnInit(): void {
+    this.gameControl = new GameController(this.drawingContext, this.boardSizePx);
+  }
 
   ngAfterViewInit(): void {
     this.initObjects();
-    this.animateBoard();
+    this.doAnimation();
   }
 
   private initObjects() {
@@ -41,15 +44,15 @@ export class SnekModuleComponent implements AfterViewInit {
     window.setInterval(() => this.boardFloatingAnim(this.boardFloatMag), this.boardFloatS * 1000);
   }
 
-  animateBoard() {
+  doAnimation() {
     this.animateCanvas(0);
     this.boardFloatingAnim(0);
   }
 
   animateCanvas(timestamp: number) {
-    let timeDeltaS = timestamp - this.lastFrameTime;
+    let timeDeltaS = timestamp - this.timeLastFrame;
+    this.timeLastFrame = timestamp;
     timeDeltaS /= 1000;
-    this.lastFrameTime = timestamp;
 
     this.drawingContext.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
     this.gameControl.draw(timeDeltaS);

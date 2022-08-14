@@ -30,7 +30,8 @@
     transition: transform var(--canvas-shifttime) ease-in-out;
 }
 
-#game-text-container {
+#menu-text-container {
+    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
     z-index: 1;
     width: 100vw;
     height: 100vh;
@@ -41,8 +42,28 @@
     justify-content: center;
     align-items: center;
 } 
-#info-text {    
-    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
+
+.score-text {
     font-size: 30px;  
-    padding-top: 10px;
+}
+.info-text {     
+    font-size: 30px;  
 } 
+
+#game-text-container {
+    font-family: "Fredoka One", Arial, Helvetica, sans-serif;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    text-align: left; 
+    font-size: 30px;  
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#ingame-score{
+
+}

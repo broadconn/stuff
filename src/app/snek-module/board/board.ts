@@ -40,7 +40,8 @@ export class Board {
     return new Vector2(x, x);
   }
 
-  public cellIsInsideBoard(cell: Vector2) {
+  public cellIsOnBoard(cell: Vector2) {
+    cell.round();
     return cell.x >= 0 && cell.x < this.numCellsWide
       && cell.y >= 0 && cell.y < this.numCellsWide;
   }
