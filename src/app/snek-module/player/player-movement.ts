@@ -54,8 +54,8 @@ export class PlayerMovementProcessor {
     }
 
     private checkForNewDirection(): Vector2 {
-        // at the start of the game the player has no axis; allow any direction request
-        let requestedDirection = this.consumeRequestedDirection(this.notMoving());
+        let canMoveAnyDirection = this.notMoving(); // at the start of the game the player has no direction; allow any direction request
+        let requestedDirection = this.consumeRequestedDirection(canMoveAnyDirection);
 
         // if no direction requested, return current direction.
         if (requestedDirection.equals(Vector2.zero))
