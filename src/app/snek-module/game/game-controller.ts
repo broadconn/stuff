@@ -67,8 +67,8 @@ export class GameController {
     // order matters!
     public draw(timeDeltaS: number) {
         this.board.draw(timeDeltaS);
-        this.player.draw(timeDeltaS);
         this.preyDispenser.draw(timeDeltaS);
+        this.player.draw(timeDeltaS);
     }
 
     private startGame(e: KeyboardEvent) {
@@ -104,10 +104,6 @@ export class GameController {
         this.spawnPrey();
     }
 
-    private spawnPrey() {
-        let newPrey = this.preyDispenser.spawnNewPrey();
-        this.player.setPrey(newPrey);
-    }
     public onPreyEaten() {
         this.score++;
         let numCellsLeft = this.board.getUnoccupiedCells().length;
@@ -115,6 +111,11 @@ export class GameController {
             this.spawnPrey();
         else
             this.gameOver(true);
+    }
+
+    private spawnPrey() {
+        let newPrey = this.preyDispenser.spawnNewPrey();
+        this.player.setPrey(newPrey);
     }
 }
 

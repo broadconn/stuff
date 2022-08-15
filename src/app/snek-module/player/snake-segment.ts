@@ -18,7 +18,7 @@ export class SnakeSegment {
         this.isControllable = isControllable;
 
         this._cell = this.attachedTo?.cell ?? this._cell;
-        this._drawnPos.set(this._cell);
+        this._drawnPos.set(this.attachedTo?.drawnPos ?? this.cell);
     }
 
     // intended for controllable segments (the head) only
