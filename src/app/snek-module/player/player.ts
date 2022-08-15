@@ -58,43 +58,49 @@ export class Snake {
     let nextDirection = this.movementProcessor.updateDirection(); // a valid direction the player has committed to moving in
     let nextCell = this.snakeHeadSegment.cell.add(nextDirection); // the cell the player will try to move into
 
-    if (this.cellIsInvalid(nextCell))
+    if (this.cellWillKillPlayer(nextCell))
       this.die();
 
     this.moveIntoCell(nextCell);
 
-    if (this.prey.cell.round().equals(this.snakeHeadSegment.cell.round())) {
+    if (this.prey.cell.equals(this.snakeHeadSegment.cell)) {
       this.eat();
       this.atePreyEvent.next(true);
     }
   }
 
-  private cellIsInvalid(cell: Vector2): boolean {
-    return !this.gameControl.board.cellIsOnBoard(cell) || this.cellIsInsidePlayer(cell);
+  private cellWillKillPlayer(cell: Vector2): boolean {
+    let cellCollidesWithBody = this.cellIsInsidePlayer(cell) && !cell.equals(this.tail().cell); // tail will move out of the way
+    let cellIsOffBoard = !this.gameControl.board.cellIsOnBoard(cell);
+    return cellIsOffBoard || cellCollidesWithBody;
+  }
+
+  private tail(): SnakeSegment {
+    return this.snakeSegments[this.snakeSegments.length - 1];
   }
 
   private cellIsInsidePlayer(tgtCell: Vector2): boolean {
-    for (let i = 1; i < this.snakeSegments.length - 1; i++) { // -1 to ignore the tail - it will move out of the way
-      if (this.snakeSegments[i].cell.round().equals(tgtCell.round()))
+    for (let i = 1; i < this.snakeSegments.length; i++) { // -1 to ignore the tail - it will move out of the way
+      if (this.snakeSegments[i].cell.equals(tgtCell))
         return true;
     }
     return false;
   }
 
   private moveIntoCell(cell: Vector2) {
-    let snakeTailCellBeforeMove = this.snakeSegments[this.snakeSegments.length - 1].cell;
+    let snakeTailCellBeforeMove = this.tail().cell;
 
     // move body into itself
     [...this.snakeSegments].reverse().forEach(segment => {
       segment.followSnake();
     });
 
-    // move head segment in the move direction 
+    // move head into cell 
     this.snakeHeadSegment.moveToCell(cell);
 
     //update the board's occupied cells list
-    let snakeTailCellAfterMove = this.snakeSegments[this.snakeSegments.length - 1].cell;
-    if (!snakeTailCellBeforeMove.round().equals(snakeTailCellAfterMove.round()))
+    let snakeTailCellAfterMove = this.tail().cell;
+    if (!snakeTailCellBeforeMove.equals(snakeTailCellAfterMove))
       this.gameControl.board.snakeTailLeftCell(snakeTailCellBeforeMove);
     this.gameControl.board.snakeHeadMovedIntoCell(cell);
   }
@@ -114,8 +120,7 @@ export class Snake {
   }
 
   private grow() {
-    let tailSegment = this.snakeSegments[this.snakeSegments.length - 1];
-    let newSegment = new SnakeSegment(tailSegment);
+    let newSegment = new SnakeSegment(this.tail());
     this.snakeSegments.push(newSegment);
   }
 
@@ -133,7 +138,7 @@ export class Snake {
     this.drawCtx.lineJoin = 'round';
     this.drawCtx.lineCap = 'round';
     this.drawCtx.beginPath();
-    this.drawCtx.moveTo(this.gameControl.board.getBoardPos(this.snakeSegments[this.snakeSegments.length - 1].drawnPos.x), this.gameControl.board.getBoardPos(this.snakeSegments[this.snakeSegments.length - 1].drawnPos.y));
+    this.drawCtx.moveTo(this.gameControl.board.getBoardPos(this.tail().drawnPos.x), this.gameControl.board.getBoardPos(this.tail().drawnPos.y));
     [...this.snakeSegments].reverse().forEach(segment => {
       if (segment.attachedTo != null) {
         this.drawCtx.lineTo(this.gameControl.board.getBoardPos(segment.attachedTo.drawnPos.x), this.gameControl.board.getBoardPos(segment.attachedTo.drawnPos.y));

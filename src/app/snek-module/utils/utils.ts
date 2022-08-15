@@ -29,7 +29,9 @@ export class Vector2 {
     }
 
     equals(v: Vector2) {
-        return this.x == v.x && this.y == v.y;
+        let v1 = this.round();
+        let v2 = v.round();
+        return v1.x == v2.x && v1.y == v2.y;
     }
 
     static get up(): Vector2 {
