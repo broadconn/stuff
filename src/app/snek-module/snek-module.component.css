@@ -22,7 +22,7 @@
     transform: translate(-50%, calc(-50% + var(--canvas-y))); 
 
     border: 2px solid rgb(230, 230, 230); 
-    border-radius: 5px;
+    border-radius: 25px;
 
     background-color: #d5e3db;
     box-shadow: 0 30px 100px #026a7c81;

@@ -34,6 +34,10 @@ export class Vector2 {
         return v1.x == v2.x && v1.y == v2.y;
     }
 
+    get copy() {
+        return new Vector2(this.x, this.y);
+    }
+
     static get up(): Vector2 {
         return new Vector2(0, -1);
     }

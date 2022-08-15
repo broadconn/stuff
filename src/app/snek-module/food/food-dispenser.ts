@@ -3,6 +3,8 @@ import { MyMath, Vector2 } from "../utils/utils";
 
 export class FoodDispenser {
     private foods: Food[] = [];
+    private spinSpeed = 0.2;
+    private bounceSpeed = 0.005;
 
     constructor(private gameControl: GameController, private drawCtx: CanvasRenderingContext2D) { }
 
@@ -26,23 +28,21 @@ export class FoodDispenser {
     public draw(timeDelta: number) {
         for (let food of this.foods) {
             if (!food.enabled) continue;
-            let bounceSpeed = 200;
-            let spinSpeed = 5;
             this.drawCtx.fillStyle = `rgb(0,150,180)`;
 
             let maxWidth = this.gameControl.board.cellWidthPx / 2.1;
             let minWidth = this.gameControl.board.cellWidthPx / 2.5;
-            let scalePerc = Math.sin(food.timeAlive() / bounceSpeed);
+            let scalePerc = Math.sin(food.timeAlive() * this.bounceSpeed);
             let spawnPerc = food.getSpawnScalePerc();
             let width = MyMath.lerp(minWidth, maxWidth, scalePerc) * spawnPerc;
-            let x = this.gameControl.board.getBoardPos(food.cell.x) - width / 2;
-            let y = this.gameControl.board.getBoardPos(food.cell.y) - width / 2;
+            let x = this.gameControl.board.getBoardPosI(food.cell.x) - width / 2;
+            let y = this.gameControl.board.getBoardPosI(food.cell.y) - width / 2;
 
-            // rect rotation... dunno why this works but whatevs man
+            // rect rotation
             let halfWidth = width / 2;
             this.drawCtx.save();
             this.drawCtx.translate(x + halfWidth, y + halfWidth);
-            this.drawCtx.rotate((food.timeAlive() / spinSpeed) * Math.PI / 180);
+            this.drawCtx.rotate((food.timeAlive() * this.spinSpeed) * Math.PI / 180);
             this.drawCtx.fillRect(-halfWidth, -halfWidth, width, width);
             this.drawCtx.restore();
         }

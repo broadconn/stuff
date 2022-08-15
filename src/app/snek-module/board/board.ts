@@ -37,8 +37,11 @@ export class Board {
     this.constructFreeCellsArray();
   }
 
-  public getBoardPos(cell: number) {
+  public getBoardPosI(cell: number) {
     return cell * this.cellWidthPx + this.cellWidthPx / 2;
+  }
+  public getBoardPos(cell: Vector2) {
+    return new Vector2(this.getBoardPosI(cell.x), this.getBoardPosI(cell.y));
   }
 
   public getCenterCell(): Vector2 {
