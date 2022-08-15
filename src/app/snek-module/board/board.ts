@@ -6,7 +6,7 @@ export class Board {
   private numCellsWide: number;
   private tileColor = '#b8d2cd';
   private tileShadowColor = '#acccc6';
-  private tileShadowVisiblePx = 2;
+  private tileShadowVisiblePx = 3;
   private _cellWidthPx: number;
   public get cellWidthPx(): number { return this._cellWidthPx; }
   private freeCells: Vector2[] = [];
