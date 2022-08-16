@@ -22,8 +22,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Wishlist
  - Pause game
- - Menu with board size selection
- - Show game time on victory
+ - Menu with board size + speed selection
+ - - Local score tables?
  - On-screen controls for touch screens
  - Visuals emphasizing the beat of the movement updates
+ - Rotate snake decorations with direction of movement
  - Visuals when eat food
