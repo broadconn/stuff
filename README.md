@@ -21,10 +21,17 @@ Deploy to github pages using `ng deploy --base-href=/stuff/`
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
 ## Wishlist
+### Home page
+ - Arcade button with game selection
+
+### Snek game
  - Pause game
  - Menu with board size + speed selection
- - - Local score tables?
+ - - Local score tables per difficulty?
  - On-screen controls for touch screens
  - Visuals emphasizing the beat of the movement updates
  - Rotate snake decorations with direction of movement
  - Visuals when eat food
+
+### More games
+ - Space invaders? Bomberman?  The possibilities are endless
