@@ -1,4 +1,3 @@
-import { Subject } from "rxjs";
 import { Food } from "../food/food-dispenser";
 import { GameController } from "../game/game-controller";
 import { MyMath, Vector2 } from "../utils/utils";
@@ -17,14 +16,10 @@ export class Snake {
   private snakeHeadWidth: number;
   private readonly movementAntiSmooth = 12;
 
-  // events
-  public deathEvent: Subject<boolean> = new Subject<boolean>();
-  public atePreyEvent: Subject<boolean> = new Subject<boolean>();
-
   private isDead = false;
 
   //food target
-  private prey: Food;
+  private food: Food;
 
   constructor(gameControl: GameController, drawCtx: CanvasRenderingContext2D,) {
     this.drawCtx = drawCtx;
@@ -64,14 +59,12 @@ export class Snake {
 
     this.moveIntoCell(nextCell);
 
-    if (this.prey.cell.equals(this.snakeHeadSegment.cell)) {
+    if (this.food.cell.equals(this.snakeHeadSegment.cell))
       this.eat();
-      this.atePreyEvent.next(true);
-    }
   }
 
   private cellWillKillPlayer(cell: Vector2): boolean {
-    let cellCollidesWithBody = this.cellIsInsidePlayer(cell) && !cell.equals(this.tail().cell); // tail will move out of the way
+    let cellCollidesWithBody = this.cellIsInsidePlayerBody(cell);
     let cellIsOffBoard = !this.g.board.cellIsOnBoard(cell);
     return cellIsOffBoard || cellCollidesWithBody;
   }
@@ -80,8 +73,9 @@ export class Snake {
     return this.snakeSegments[this.snakeSegments.length - 1];
   }
 
-  private cellIsInsidePlayer(tgtCell: Vector2): boolean {
-    for (let i = 0; i < this.snakeSegments.length; i++) {
+  // ignores the tail
+  private cellIsInsidePlayerBody(tgtCell: Vector2): boolean {
+    for (let i = 0; i < this.snakeSegments.length - 1; i++) {
       if (this.snakeSegments[i].cell.equals(tgtCell))
         return true;
     }
@@ -108,16 +102,18 @@ export class Snake {
 
   private die() {
     this.isDead = true;
-    this.deathEvent.next(true);
+    this.g.onPlayerDied();
   }
 
   private eat() {
-    this.prey.getEaten();
+    this.food.getEaten();
     this.grow();
+
+    this.g.onPreyEaten();
   }
 
   public setPrey(food: Food) {
-    this.prey = food;
+    this.food = food;
   }
 
   private grow() {
@@ -130,7 +126,7 @@ export class Snake {
 
     // update the snake's smoothed position
     this.snakeSegments.forEach((segment, i) => {
-      let smoothSpeed = timeDelta * (i == 0 || i == this.snakeSegments.length - 1 ? this.movementAntiSmooth : this.movementAntiSmooth);
+      let smoothSpeed = timeDelta * this.movementAntiSmooth;
       segment.moveDrawPosTowardsCell(smoothSpeed);
     });
 
@@ -140,27 +136,28 @@ export class Snake {
     this.drawCtx.lineJoin = 'round';
     this.drawCtx.lineCap = 'round';
 
+    // draw lines from each segment to it's target segment
     this.drawCtx.beginPath();
-
-    // draw a line from each segment to it's target segment
-    let tailTip = this.g.board.getBoardPos(this.tail().drawnPos);
-    this.drawCtx.moveTo(tailTip.x, tailTip.y);
+    let tailDrawnPos = this.g.board.getBoardPos(this.tail().drawnPos);
+    this.drawCtx.moveTo(tailDrawnPos.x, tailDrawnPos.y);
     for (let i = this.snakeSegments.length - 1; i >= 0; --i) {
       let segment = this.snakeSegments[i];
 
       if (useSmoothMovement) {
+        // draw a line to the segment's target cell, then to the next segment's drawn position.
         if (i == 0) {
-          let destinationPos = this.g.board.getBoardPos(segment.drawnPos);
-          this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+          let drawnPos = this.g.board.getBoardPos(segment.drawnPos);
+          this.drawCtx.lineTo(drawnPos.x, drawnPos.y);
         }
         else {
-          let destinationPos = this.g.board.getBoardPos(segment.cell);
-          this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+          let cell = this.g.board.getBoardPos(segment.cell);
+          this.drawCtx.lineTo(cell.x, cell.y);
         }
       }
       else {
-        let destinationPos = this.g.board.getBoardPos(segment.drawnPos);
-        this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+        // wonky movement - just draw lines between the drawn positions
+        let drawnPos = this.g.board.getBoardPos(segment.drawnPos);
+        this.drawCtx.lineTo(drawnPos.x, drawnPos.y);
       }
     };
     this.drawCtx.stroke();

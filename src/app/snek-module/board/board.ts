@@ -10,6 +10,7 @@ export class Board {
   private _cellWidthPx: number;
   public get cellWidthPx(): number { return this._cellWidthPx; }
   private freeCells: Vector2[] = [];
+  private debugFreeCells: boolean = false;
 
   constructor(drawingCtx: CanvasRenderingContext2D, numCellsWide: number, width: number) {
     this.drawCtx = drawingCtx;
@@ -22,6 +23,7 @@ export class Board {
   public draw(timeDelta: number) {
     for (let i = 0; i < this.numCellsWide; i++) {
       for (let j = 0; j < this.numCellsWide; j++) {
+        // only draw every 2nd tile
         if ((i + j) % 2 == 0) continue;
         // shadow tile
         this.drawCtx.fillStyle = this.tileShadowColor;
@@ -29,6 +31,14 @@ export class Board {
         // actual tile
         this.drawCtx.fillStyle = this.tileColor;
         this.drawCtx.fillRect(i * this.cellWidthPx, j * this.cellWidthPx, this._cellWidthPx - this.tileShadowVisiblePx, this._cellWidthPx - this.tileShadowVisiblePx);
+      }
+    }
+
+    if (this.debugFreeCells) {
+      let freeCells = this.getUnoccupiedCells();
+      for (let i = 0; i < freeCells.length; i++) {
+        this.drawCtx.fillStyle = 'rgba(0,25,255, 0.2)';
+        this.drawCtx.fillRect(this.freeCells[i].x * this.cellWidthPx, this.freeCells[i].y * this.cellWidthPx, this._cellWidthPx - this.tileShadowVisiblePx, this._cellWidthPx - this.tileShadowVisiblePx);
       }
     }
   }

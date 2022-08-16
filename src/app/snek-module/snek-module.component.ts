@@ -11,57 +11,38 @@ export class SnekModuleComponent implements OnInit, AfterViewInit {
   drawingContext: CanvasRenderingContext2D;
   gameControl: GameController;
 
-  readonly boardSizePx = 500;
-  readonly boardFloatMag: number = 5;
-  readonly boardFloatS: number = 10;
-  boardFloatDir: number = 1;
-
-  private timeLastFrame: number;
-
   constructor() { }
 
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     this.initObjects();
-    this.doAnimation();
+    this.animateCanvas();
   }
 
   private initObjects() {
+    this.drawingContext = this.gameCanvas.nativeElement.getContext('2d');
+    this.gameControl = new GameController(this.drawingContext);
     this.setUpCanvas(this.gameCanvas);
-    this.gameControl = new GameController(this.drawingContext, this.boardSizePx);
   }
 
   private setUpCanvas(gameCanvas: ElementRef) {
-    gameCanvas.nativeElement.width = this.boardSizePx;
-    gameCanvas.nativeElement.height = this.boardSizePx;
-
-    this.drawingContext = gameCanvas.nativeElement.getContext('2d');
-
-    window.setInterval(() => this.boardFloatingAnim(this.boardFloatMag), this.boardFloatS * 1000);
+    gameCanvas.nativeElement.width = this.gameControl.boardSizePx;
+    gameCanvas.nativeElement.height = this.gameControl.boardSizePx;
   }
 
-  doAnimation() {
-    this.animateCanvas(0);
-    this.boardFloatingAnim(0);
-  }
-
-  animateCanvas(timestamp: number) {
+  private timeLastFrame: number;
+  animateCanvas(timestamp: number = 0) {
     let timeDeltaS = timestamp - this.timeLastFrame;
     this.timeLastFrame = timestamp;
     timeDeltaS /= 1000;
 
-    let canvasY = Math.sin(Date.now() / 5000) * this.boardFloatMag;
+    const boardFloatMag: number = 5;
+    let canvasY = Math.sin(Date.now() / 5000) * boardFloatMag;
     this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${canvasY}%`);
 
-    this.drawingContext.clearRect(0, 0, this.boardSizePx, this.boardSizePx);
+    this.drawingContext.clearRect(0, 0, this.gameControl.boardSizePx, this.gameControl.boardSizePx);
     this.gameControl.draw(timeDeltaS);
     window.requestAnimationFrame((timestamp) => this.animateCanvas(timestamp));
-  }
-
-  boardFloatingAnim(floatMagnitude: number) {
-    // this.boardFloatDir = -1 * this.boardFloatDir;
-    // this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `${this.boardFloatDir * floatMagnitude}%`);
-    // this.gameCanvas.nativeElement.style.setProperty("--canvas-shifttime", `${this.boardFloatS}s`);
   }
 }

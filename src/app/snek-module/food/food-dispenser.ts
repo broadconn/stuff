@@ -8,6 +8,17 @@ export class FoodDispenser {
 
     constructor(private gameControl: GameController, private drawCtx: CanvasRenderingContext2D) { }
 
+    public update() {
+        // check for any eaten food that can be removed
+        let eatenFood: Food[] = [];
+        for (let food of this.foods) {
+            if (food.wasEaten && food.getScalePerc() == 0) {
+                eatenFood.push(food);
+            }
+        }
+        this.foods = this.foods.filter(c => eatenFood.indexOf(c) < 0);
+    }
+
     public spawnNewPrey(): Food {
         let cell = this.getFreeBoardCell();
         let food = new Food(cell);
@@ -27,14 +38,13 @@ export class FoodDispenser {
 
     public draw(timeDelta: number) {
         for (let food of this.foods) {
-            if (!food.enabled) continue;
             this.drawCtx.fillStyle = `rgb(0,150,180)`;
 
             let maxWidth = this.gameControl.board.cellWidthPx / 2.1;
             let minWidth = this.gameControl.board.cellWidthPx / 2.5;
-            let scalePerc = Math.sin(food.timeAlive() * this.bounceSpeed);
-            let spawnPerc = food.getSpawnScalePerc();
-            let width = MyMath.lerp(minWidth, maxWidth, scalePerc) * spawnPerc;
+            let animPerc = Math.sin(food.timeAlive() * this.bounceSpeed);
+            let scalePerc = food.getScalePerc();
+            let width = MyMath.lerp(minWidth, maxWidth, animPerc) * scalePerc;
             let x = this.gameControl.board.getBoardPosI(food.cell.x) - width / 2;
             let y = this.gameControl.board.getBoardPosI(food.cell.y) - width / 2;
 
@@ -52,9 +62,8 @@ export class FoodDispenser {
 export class Food {
     private spawnSpeed = 400;
 
-    private _enabled = true;
-    public get enabled() { return this._enabled; };
-    private wasEaten = false;
+    private _wasEaten = false;
+    public get wasEaten() { return this._wasEaten; };
     public cell: Vector2;
     public timeCreated: number;
     public timeEaten: number;
@@ -73,18 +82,16 @@ export class Food {
     }
 
     public getEaten() {
-        this.wasEaten = true;
+        this._wasEaten = true;
         this.timeEaten = Date.now();
     }
 
-    public getSpawnScalePerc() {
+    public getScalePerc() {
         let spawnScale01 = Math.min(1.0, this.timeAlive() / this.spawnSpeed);
         let despawnScale01 = 1;
 
-        if (this.wasEaten) {
+        if (this._wasEaten)
             despawnScale01 = 1 - (Math.min(1.0, (Math.max(0, this.timeSinceEaten() / this.spawnSpeed))));
-            if (despawnScale01 == 0) this._enabled = false;
-        }
 
         return spawnScale01 * despawnScale01;
     }

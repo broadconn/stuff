@@ -51,7 +51,3 @@ export class SnakeSegment {
         this._drawnPos.y = MyMath.lerp(this._drawnPos.y, this.cell.y, Math.min(timeDelta, 1));
     }
 }
-
-// export class HeadSegment extends SnakeSegment {
-
-// }
