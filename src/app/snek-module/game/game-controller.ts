@@ -12,7 +12,7 @@ export class GameController {
 
     // game settings 
     readonly updateFreqMs = 250; // speed: 150-250-350
-    readonly boardNumCellsWide = 5;
+    readonly boardNumCellsWide = 9;
     readonly _boardSizePx: number;
     public get boardSizePx() { return this._boardSizePx; }
 
@@ -31,7 +31,7 @@ export class GameController {
 
     constructor(drawCtx: CanvasRenderingContext2D) {
         this._gameState = GameState.MainMenu;
-        this._boardSizePx = (this.boardNumCellsWide / 1.5) * 100;
+        this._boardSizePx = this.boardNumCellsWide * 55.5;
 
         this.board = new Board(drawCtx, this.boardNumCellsWide, this.boardSizePx);
         this.player = new Snake(this, drawCtx);
