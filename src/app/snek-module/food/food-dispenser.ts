@@ -4,11 +4,29 @@ import { MyMath, Vector2 } from "../utils/utils";
 export class FoodDispenser {
     private foods: Food[] = [];
 
+    private spawnSpeedMS = 400;
+    private spinSpeed = 0.2;
+    private bounceSpeed = 0.005;
+    private minWidth = 0.4;
+    private maxWidth = 0.476;
+    private color = `rgb(0, 150, 180)`;
+
     constructor(private gameControl: GameController, private drawCtx: CanvasRenderingContext2D) { }
+
+    public update() {
+        // check for any eaten food that can be removed
+        let eatenFood: Food[] = [];
+        for (let food of this.foods) {
+            if (food.wasEaten && food.getScalePerc() == 0) {
+                eatenFood.push(food);
+            }
+        }
+        this.foods = this.foods.filter(c => eatenFood.indexOf(c) < 0);
+    }
 
     public spawnNewPrey(): Food {
         let cell = this.getFreeBoardCell();
-        let food = new Food(cell);
+        let food = new Food(cell, this.spawnSpeedMS);
         this.foods.push(food);
         return food;
     }
@@ -25,24 +43,24 @@ export class FoodDispenser {
 
     public draw(timeDelta: number) {
         for (let food of this.foods) {
-            if (!food.enabled) continue;
-            let bounceSpeed = 200;
-            let spinSpeed = 5;
-            this.drawCtx.fillStyle = `rgb(0,150,180)`;
+            this.drawCtx.fillStyle = this.color;
 
-            let maxWidth = this.gameControl.board.cellWidthPx / 2.1;
-            let minWidth = this.gameControl.board.cellWidthPx / 2.5;
-            let scalePerc = Math.sin(food.timeAlive() / bounceSpeed);
-            let spawnPerc = food.getSpawnScalePerc();
-            let width = MyMath.lerp(minWidth, maxWidth, scalePerc) * spawnPerc;
-            let x = this.gameControl.board.getBoardPos(food.cell.x) - width / 2;
-            let y = this.gameControl.board.getBoardPos(food.cell.y) - width / 2;
+            // width
+            let maxWidth = this.gameControl.board.cellWidthPx * this.maxWidth;
+            let minWidth = this.gameControl.board.cellWidthPx * this.minWidth;
 
-            // rect rotation... dunno why this works but whatevs man
+            // scale
+            let animPerc = Math.sin(food.timeAlive() * this.bounceSpeed);
+            let scalePerc = food.getScalePerc();
+            let width = MyMath.lerp(minWidth, maxWidth, animPerc) * scalePerc;
+
+            // rotation + position
+            let x = this.gameControl.board.getBoardPosI(food.cell.x) - width / 2;
+            let y = this.gameControl.board.getBoardPosI(food.cell.y) - width / 2;
             let halfWidth = width / 2;
             this.drawCtx.save();
             this.drawCtx.translate(x + halfWidth, y + halfWidth);
-            this.drawCtx.rotate((food.timeAlive() / spinSpeed) * Math.PI / 180);
+            this.drawCtx.rotate((food.timeAlive() * this.spinSpeed) * Math.PI / 180);
             this.drawCtx.fillRect(-halfWidth, -halfWidth, width, width);
             this.drawCtx.restore();
         }
@@ -50,18 +68,18 @@ export class FoodDispenser {
 }
 
 export class Food {
-    private spawnSpeed = 400;
+    private spawnSpeed: number;
 
-    private _enabled = true;
-    public get enabled() { return this._enabled; };
-    private wasEaten = false;
+    private _wasEaten = false;
+    public get wasEaten() { return this._wasEaten; };
     public cell: Vector2;
     public timeCreated: number;
     public timeEaten: number;
 
-    constructor(cell: Vector2) {
+    constructor(cell: Vector2, spawnSpeed: number) {
         this.cell = cell;
         this.timeCreated = Date.now();
+        this.spawnSpeed = spawnSpeed;
     }
 
     public timeAlive(): number {
@@ -73,18 +91,16 @@ export class Food {
     }
 
     public getEaten() {
-        this.wasEaten = true;
+        this._wasEaten = true;
         this.timeEaten = Date.now();
     }
 
-    public getSpawnScalePerc() {
+    public getScalePerc() {
         let spawnScale01 = Math.min(1.0, this.timeAlive() / this.spawnSpeed);
         let despawnScale01 = 1;
 
-        if (this.wasEaten) {
+        if (this._wasEaten)
             despawnScale01 = 1 - (Math.min(1.0, (Math.max(0, this.timeSinceEaten() / this.spawnSpeed))));
-            if (despawnScale01 == 0) this._enabled = false;
-        }
 
         return spawnScale01 * despawnScale01;
     }
