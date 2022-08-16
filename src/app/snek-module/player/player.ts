@@ -126,6 +126,8 @@ export class Snake {
   }
 
   public draw(timeDelta: number) {
+    let useSmoothMovement = true;
+
     // update the snake's smoothed position
     this.snakeSegments.forEach((segment, i) => {
       let smoothSpeed = timeDelta * (i == 0 || i == this.snakeSegments.length - 1 ? this.movementAntiSmooth : this.movementAntiSmooth);
@@ -146,12 +148,18 @@ export class Snake {
     for (let i = this.snakeSegments.length - 1; i >= 0; --i) {
       let segment = this.snakeSegments[i];
 
-      if (i == 0) {
-        let destinationPos = this.g.board.getBoardPos(segment.drawnPos);
-        this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+      if (useSmoothMovement) {
+        if (i == 0) {
+          let destinationPos = this.g.board.getBoardPos(segment.drawnPos);
+          this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+        }
+        else {
+          let destinationPos = this.g.board.getBoardPos(segment.cell);
+          this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
+        }
       }
       else {
-        let destinationPos = this.g.board.getBoardPos(segment.cell);
+        let destinationPos = this.g.board.getBoardPos(segment.drawnPos);
         this.drawCtx.lineTo(destinationPos.x, destinationPos.y);
       }
     };
