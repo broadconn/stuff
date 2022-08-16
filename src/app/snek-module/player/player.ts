@@ -181,7 +181,7 @@ export class Snake {
       let x = this.g.board.getBoardPosI(segment.drawnPos.x) - width / 2;
       let y = this.g.board.getBoardPosI(segment.drawnPos.y) - width / 2;
 
-      // rotation 
+      // rotation + position
       let halfWidth = width / 2;
       this.drawCtx.save();
       this.drawCtx.translate(x + halfWidth, y + halfWidth);
