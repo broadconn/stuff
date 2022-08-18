@@ -5,15 +5,15 @@ import { Snake } from "../player/player";
 export class GameController {
     public player: Snake;
     public board: Board;
-    private foodDispenser: FoodDispenser;
+    private food: FoodDispenser;
     private gameIntervalId: number; // game update ticker
     readonly arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     readonly spaceCode = "Space";
 
     // game settings 
-    readonly updateFreqMs = 250; // speed: 150-250-350
-    readonly boardNumCellsWide = 9;
-    readonly _boardSizePx: number;
+    private updateFreqMs = 250; // speed: 150-250-350
+    private boardNumCellsWide = 9;
+    private _boardSizePx: number;
     public get boardSizePx() { return this._boardSizePx; }
 
     // score stuff
@@ -29,16 +29,11 @@ export class GameController {
     public get isGameOver() { return this._gameState == GameState.GameOver; }
     public get playerHasWon() { return this._gameState == GameState.Victorious; }
 
-    constructor(drawCtx: CanvasRenderingContext2D) {
+    constructor(private drawCtx: CanvasRenderingContext2D) {
         this._gameState = GameState.MainMenu;
-        this._boardSizePx = this.boardNumCellsWide * 55.5;
 
-        this.board = new Board(drawCtx, this.boardNumCellsWide, this.boardSizePx);
-        this.player = new Snake(this, drawCtx);
-        this.foodDispenser = new FoodDispenser(this, drawCtx);
-
+        this.changeBoard(this.boardNumCellsWide);
         this.setUpKeyboardListener();
-        this.resetGame();
     }
 
     private setUpKeyboardListener() {
@@ -61,9 +56,26 @@ export class GameController {
         }
     }
 
+    public changeBoard(cellsWide: number) {
+        this.setBoardSize(cellsWide);
+        this.board = new Board(this.drawCtx, this.boardNumCellsWide, this.boardSizePx);
+        this.player = new Snake(this, this.drawCtx);
+        this.food = new FoodDispenser(this, this.drawCtx);
+        this.prepareToPlay();
+    }
+
+    private setBoardSize(cellsWide: number) {
+        this.boardNumCellsWide = cellsWide;
+        this._boardSizePx = this.boardNumCellsWide * 55.5;
+    }
+
+    public setSpeed(updateMs: number) {
+        this.updateFreqMs = updateMs;
+    }
+
     public draw(timeDeltaS: number) {
         this.board.draw(timeDeltaS);
-        this.foodDispenser.draw(timeDeltaS);
+        this.food.draw(timeDeltaS);
         this.player.draw(timeDeltaS);
     }
 
@@ -79,7 +91,7 @@ export class GameController {
     }
 
     private doGameUpdate() {
-        this.foodDispenser.update();
+        this.food.update();
         this.player.update();
     }
 
@@ -92,12 +104,12 @@ export class GameController {
 
     private goToMainMenu() {
         this._gameState = GameState.MainMenu;
-        this.resetGame();
+        this.prepareToPlay();
     }
 
     // care! order matters!
-    private resetGame() {
-        this.foodDispenser.reset();
+    private prepareToPlay() {
+        this.food.reset();
         this.board.reset();
         this.player.reset();
         this.score = 0;
@@ -114,7 +126,7 @@ export class GameController {
     }
 
     private spawnPrey() {
-        let newPrey = this.foodDispenser.spawnNewPrey();
+        let newPrey = this.food.spawnNewPrey();
         this.player.setPrey(newPrey);
     }
 

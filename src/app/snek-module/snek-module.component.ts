@@ -10,6 +10,7 @@ export class SnekModuleComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
   drawingContext: CanvasRenderingContext2D;
   gameControl: GameController;
+  speedSetting: string = "Normal";
 
   constructor() { }
 
@@ -23,12 +24,40 @@ export class SnekModuleComponent implements OnInit, AfterViewInit {
   private initObjects() {
     this.drawingContext = this.gameCanvas.nativeElement.getContext('2d');
     this.gameControl = new GameController(this.drawingContext);
-    this.setUpCanvas(this.gameCanvas);
+    this.setCanvasSize();
+    this.gameCanvas.nativeElement.style.setProperty("--canvas-y", `0%`);
   }
 
-  private setUpCanvas(gameCanvas: ElementRef) {
-    gameCanvas.nativeElement.width = this.gameControl.boardSizePx;
-    gameCanvas.nativeElement.height = this.gameControl.boardSizePx;
+  public setBoardSize(cellsWide: number) {
+    this.gameControl.changeBoard(cellsWide);
+    this.setCanvasSize();
+  }
+
+  private setCanvasSize() {
+    this.gameCanvas.nativeElement.width = this.gameControl.boardSizePx;
+    this.gameCanvas.nativeElement.height = this.gameControl.boardSizePx;
+  }
+
+  public setSpeed(updateMs: number) {
+    this.gameControl.setSpeed(updateMs);
+
+    switch (updateMs) {
+      case 100:
+        this.speedSetting = "Sanic";
+        break;
+      case 150:
+        this.speedSetting = "Fast";
+        break;
+      case 250:
+        this.speedSetting = "Normal";
+        break;
+      case 350:
+        this.speedSetting = "Slow";
+        break;
+
+      default:
+        this.speedSetting = "Normal";
+    }
   }
 
   private timeLastFrame: number;
