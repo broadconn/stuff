@@ -1,30 +1,15 @@
 <div id="game-bg">  
     <div id="menu-text-container">
-        <div *ngIf="this.gameControl?.onMainMenu ?? false">
-            <div id="board-btns-container">
-                <div class="board-btns-container">
-                    <button class="board-btn board-size-text" (click)="this.setSpeed(350);">Slow</button>
-                    <button class="board-btn board-size-text" (click)="this.setSpeed(250);">Normal</button>
-                    <button class="board-btn board-size-text" (click)="this.setSpeed(150);">Fast</button>
-                    <button class="board-btn board-size-text" (click)="this.setSpeed(100);">Sanic</button>
-                </div>
-                <div class="board-btns-container">
-                    <button class="board-btn board-size-text" (click)="this.setBoardSize(3);">3x3</button>
-                    <button class="board-btn board-size-text" (click)="this.setBoardSize(4);">4x4</button>
-                    <button class="board-btn board-size-text" (click)="this.setBoardSize(5);">5x5</button>
-                    <button class="board-btn board-size-text" (click)="this.setBoardSize(9);">9x9</button>
-                    <button class="board-btn board-size-text" (click)="this.setBoardSize(17);">17x17</button>
-                </div>
-            </div>
+        <div *ngIf="this.gameControl?.onMainMenu ?? false"> 
             <p class="menu-text">Press any arrow key to start! :D</p> 
         </div>
         <div *ngIf="this.gameControl?.isGameOver ?? false" class="menu-text text-light">
-            <div class="score-text">[{{this.speedSetting}}] Score: {{this.gameControl.score}}</div>
+            <div class="score-text">Score: {{this.gameControl.score}}</div>
             <h1>GAME OVER</h1>
             Press space to reset
         </div>
         <div *ngIf="this.gameControl?.playerHasWon ?? false" class="menu-text text-light victory-text">
-            <div class="score-text">[{{this.speedSetting}}] Time: {{this.gameControl.finalTimeStr}}s</div>
+            <div class="score-text">Time: {{this.gameControl.finalTimeStr}}s</div>
             <h1>😎 Victory! 😎</h1>
             Press space to reset
         </div>
